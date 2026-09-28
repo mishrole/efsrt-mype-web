@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      - uses: pnpm/action-setp@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10
 
