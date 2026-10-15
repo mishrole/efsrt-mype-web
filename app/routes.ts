@@ -1,3 +1,8 @@
-import { type RouteConfig, index } from "@react-router/dev/routes"
+import { type RouteConfig, index, route } from "@react-router/dev/routes"
+import { APP_PAGES_ROUTES } from "./shared/constants/pages"
 
-export default [index("routes/home.tsx")] satisfies RouteConfig
+export default [
+  index("features/home/screens/home/index.tsx"),
+  route(APP_PAGES_ROUTES.LOGIN, "features/auth/screens/login/index.tsx"),
+  route(APP_PAGES_ROUTES.REGISTER, "features/auth/screens/register/index.tsx"),
+] satisfies RouteConfig

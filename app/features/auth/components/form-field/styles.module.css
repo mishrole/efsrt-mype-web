@@ -1,0 +1,35 @@
+.field {
+  display: grid;
+  gap: 8px;
+}
+.field label {
+  color: #27324a;
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+.field input {
+  background: #fff;
+  border: 1px solid #cfd6e4;
+  border-radius: 14px;
+  color: #172033;
+  min-height: 52px;
+  outline: none;
+  padding: 0 16px;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+  width: 100%;
+}
+.field input:focus {
+  border-color: #3569e8;
+  box-shadow: 0 0 0 4px rgba(53, 105, 232, 0.12);
+}
+.field input[aria-invalid="true"] {
+  border-color: #c73c54;
+}
+.error {
+  color: #b3263e;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: 0;
+}
