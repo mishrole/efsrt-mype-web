@@ -1,0 +1,233 @@
+.hero {
+  align-items: center;
+  display: grid;
+  gap: clamp(52px, 7vw, 100px);
+  grid-template-columns: minmax(0, 0.92fr) minmax(520px, 1.08fr);
+  margin: 0 auto;
+  padding: 92px 0 110px;
+  position: relative;
+  width: min(1180px, calc(100% - 40px));
+}
+.hero::before {
+  background: rgba(60, 116, 244, 0.11);
+  border-radius: 50%;
+  content: "";
+  filter: blur(42px);
+  height: 380px;
+  left: -190px;
+  pointer-events: none;
+  position: absolute;
+  top: 22px;
+  width: 380px;
+}
+.copy {
+  position: relative;
+  z-index: 1;
+}
+.badge {
+  background: #f2f6ff;
+  border: 1px solid #ccd9fb;
+  border-radius: 999px;
+  color: #2455c3;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 8px 12px;
+}
+.copy h1 {
+  color: #10203d;
+  font-size: clamp(3rem, 5.5vw, 5.5rem);
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+  margin: 24px 0 22px;
+}
+.copy h1 span {
+  color: #2860df;
+}
+.description {
+  color: #606c82;
+  font-size: 1.08rem;
+  line-height: 1.75;
+  margin: 0;
+  max-width: 620px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 32px;
+}
+.primaryAction,
+.secondaryAction {
+  align-items: center;
+  border-radius: 14px;
+  display: inline-flex;
+  font-size: 0.93rem;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 21px;
+  text-decoration: none;
+}
+.primaryAction {
+  background: linear-gradient(135deg, #2b63e4, #1744b6);
+  box-shadow: 0 14px 32px rgba(31, 84, 207, 0.25);
+  color: #fff;
+}
+.secondaryAction {
+  background: #fff;
+  border: 1px solid #d5dcea;
+  color: #263653;
+}
+.assurances {
+  color: #758097;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.77rem;
+  gap: 20px;
+  margin-top: 25px;
+}
+.assurances span::before {
+  color: #2f9a66;
+  content: "✓";
+  font-weight: 900;
+  margin-right: 7px;
+}
+.preview {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(173, 190, 222, 0.55);
+  border-radius: 28px;
+  box-shadow: 0 35px 80px rgba(20, 55, 113, 0.16);
+  isolation: isolate;
+  padding: 26px;
+  position: relative;
+  transform: none;
+}
+.preview::before {
+  background: linear-gradient(145deg, #e5edff, #f8faff);
+  border-radius: 28px;
+  content: "";
+  inset: 0;
+  position: absolute;
+  z-index: -1;
+}
+.previewHeader,
+.chartHeading {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+.previewHeader > div {
+  display: grid;
+  gap: 5px;
+}
+.previewLabel,
+.metrics span,
+.chartHeading span {
+  color: #7a8599;
+  font-size: 0.75rem;
+}
+.previewHeader strong {
+  color: #1d2c48;
+  font-size: 1.08rem;
+}
+.status {
+  background: #e9f8f1;
+  border-radius: 999px;
+  color: #24734f;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 7px 10px;
+}
+.metrics {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  margin: 24px 0;
+}
+.metrics article {
+  background: #fbfcff;
+  border: 1px solid #e5eaf3;
+  border-radius: 17px;
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+.metrics strong {
+  color: #17253f;
+  font-size: 1.06rem;
+}
+.metrics small {
+  color: #34815d;
+  font-size: 0.68rem;
+}
+.chart {
+  background: #f5f8ff;
+  border-radius: 18px;
+  padding: 18px;
+}
+.chartHeading strong {
+  color: #1f55c7;
+  font-size: 0.8rem;
+}
+.chartGrid {
+  align-items: flex-end;
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent 42px,
+    #e4e9f3 43px
+  );
+  border-bottom: 1px solid #d8e0ef;
+  display: flex;
+  gap: 14px;
+  height: 175px;
+  justify-content: space-around;
+  margin-top: 18px;
+}
+.chartGrid span {
+  background: linear-gradient(to top, #2458d1, #79a1ff);
+  border-radius: 8px 8px 2px 2px;
+  box-shadow: 0 5px 14px rgba(42, 92, 211, 0.16);
+  width: 24px;
+}
+@media (max-width: 1000px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 68px;
+  }
+  .copy {
+    max-width: 720px;
+  }
+  .preview {
+    max-width: 720px;
+  }
+}
+@media (max-width: 620px) {
+  .hero {
+    padding: 54px 0 76px;
+    width: min(100% - 28px, 1180px);
+  }
+  .copy h1 {
+    font-size: 3.15rem;
+  }
+  .actions > a {
+    width: 100%;
+  }
+  .preview {
+    border-radius: 21px;
+    padding: 16px;
+    transform: none;
+  }
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+  .metrics article:not(:first-child) {
+    display: none;
+  }
+  .chartGrid {
+    height: 135px;
+  }
+}

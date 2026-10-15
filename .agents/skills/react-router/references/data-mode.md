@@ -33,7 +33,7 @@ Always check the `[MODES: data, ...]` marker in a doc before applying it.
 Typical setup:
 
 ```tsx
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router"
 
 const router = createBrowserRouter([
   {
@@ -49,9 +49,9 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+])
 
-root.render(<RouterProvider router={router} />);
+root.render(<RouterProvider router={router} />)
 ```
 
 Look for route object arrays and APIs such as:
