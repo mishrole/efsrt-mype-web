@@ -1,4 +1,6 @@
 import { Link } from "react-router"
+import { FullScreenLoading } from "~/shared/components/full-screen-loading"
+import { useAuthenticatedRouteRedirect } from "~/shared/hooks/use-authenticated-route-redirect"
 import { AuthLayout } from "../../components/auth-layout"
 import { RegisterForm } from "./components/register-form"
 
@@ -7,6 +9,12 @@ export function meta() {
 }
 
 export default function RegisterScreen() {
+  const redirecting = useAuthenticatedRouteRedirect()
+
+  if (redirecting) {
+    return <FullScreenLoading message="Cargando tu negocio..." />
+  }
+
   return (
     <AuthLayout
       eyebrow="Empieza hoy"

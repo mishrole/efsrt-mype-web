@@ -110,14 +110,17 @@ export function useDashboard(): UseDashboardResult {
 
         setBusinesses(loadedBusinesses)
         setBusinessesLoaded(true)
-        setIsBusinessesLoading(false)
 
         if (!selectedBusinessId) {
+          setIsBusinessesLoading(false)
           selectBusiness("")
           setContext(null)
           setDashboard(null)
           return
         }
+
+        setIsDashboardLoading(true)
+        setIsBusinessesLoading(false)
 
         if (selectedBusinessId !== storedBusinessId) {
           selectBusiness(selectedBusinessId)

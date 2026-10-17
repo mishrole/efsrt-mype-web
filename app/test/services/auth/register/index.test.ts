@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
+import type { RequestOptions } from "~/shared/http/client/interfaces"
 import { register } from "../../../../services/auth/register"
 import { API_ROUTES } from "../../../../shared/constants/api"
 import { request } from "../../../../shared/http/client"
@@ -30,11 +31,14 @@ describe("register service", () => {
       response,
     )
 
-    expect(requestMock).toHaveBeenCalledWith(API_ROUTES.AUTH.REGISTER, {
+    const options: RequestOptions = {
       method: "POST",
       body: payload,
       signal: controller.signal,
-    })
+      skipAuthRefresh: true,
+    }
+
+    expect(requestMock).toHaveBeenCalledWith(API_ROUTES.AUTH.REGISTER, options)
 
     expect(requestMock).not.toHaveBeenCalledWith(
       API_ROUTES.AUTH.REGISTER,

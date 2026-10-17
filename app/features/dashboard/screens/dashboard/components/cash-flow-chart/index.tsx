@@ -12,7 +12,6 @@ import {
 
 import { CHART_COLORS } from "./constants"
 import type { CashFlowChartProps } from "./interfaces"
-import styles from "./styles.module.css"
 import {
   calculateXAxisInterval,
   createCashFlowChartData,
@@ -36,20 +35,34 @@ export function CashFlowChart({
   }
 
   return (
-    <section className={styles.card} aria-labelledby="cash-flow-chart-title">
-      <header className={styles.header}>
+    <section
+      className="min-w-0 rounded-[20px] border border-[#e2e7f0] bg-white px-3.5 py-[18px] min-[641px]:p-6"
+      aria-labelledby="cash-flow-chart-title"
+    >
+      <header className="grid items-start gap-1.5 min-[641px]:flex min-[641px]:justify-between min-[641px]:gap-6">
         <div>
-          <span className={styles.eyebrow}>Tendencia</span>
-          <h2 id="cash-flow-chart-title">Flujo de caja</h2>
+          <span className="text-[0.7rem] font-[850] tracking-[0.1em] text-[#2b5fce] uppercase">
+            Tendencia
+          </span>
+          <h2
+            className="mt-[5px] mb-0 text-[#182641]"
+            id="cash-flow-chart-title"
+          >
+            Flujo de caja
+          </h2>
         </div>
 
-        <p>Ingresos, egresos y saldo de cierre</p>
+        <p className="mt-0.5 mb-0 text-[0.78rem] text-[#7c8799]">
+          Ingresos, egresos y saldo de cierre
+        </p>
       </header>
 
       {chartData.length === 0 ? (
-        <p className={styles.empty}>No hay información para el periodo.</p>
+        <p className="m-0 py-24 text-center text-[#778296]">
+          No hay información para el periodo.
+        </p>
       ) : (
-        <div className={styles.chart}>
+        <div className="h-[280px] min-w-0 w-full min-[641px]:h-[340px]">
           <ResponsiveContainer width="100%" height="100%" minWidth={0}>
             <ComposedChart
               accessibilityLayer

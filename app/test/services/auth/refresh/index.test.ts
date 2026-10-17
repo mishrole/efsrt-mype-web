@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
+import type { RequestOptions } from "~/shared/http/client/interfaces"
 import { refreshSession } from "../../../../services/auth/refresh"
 import { API_ROUTES } from "../../../../shared/constants/api"
 import { request } from "../../../../shared/http/client"
@@ -28,11 +29,14 @@ describe("refreshSession service", () => {
 
     await expect(refreshSession(controller.signal)).resolves.toEqual(response)
 
-    expect(requestMock).toHaveBeenCalledWith(API_ROUTES.AUTH.REFRESH, {
+    const options: RequestOptions = {
       method: "POST",
       credentials: "include",
       signal: controller.signal,
-    })
+      skipAuthRefresh: true,
+    }
+
+    expect(requestMock).toHaveBeenCalledWith(API_ROUTES.AUTH.REFRESH, options)
 
     expect(requestMock).not.toHaveBeenCalledWith(
       API_ROUTES.AUTH.REFRESH,

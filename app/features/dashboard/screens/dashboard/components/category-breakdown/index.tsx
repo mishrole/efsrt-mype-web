@@ -13,7 +13,6 @@ import {
 
 import { CHART_COLORS } from "./constants"
 import type { CategoryBreakdownProps } from "./interfaces"
-import styles from "./styles.module.css"
 import {
   calculateCategoryChartHeight,
   createCategoryChartData,
@@ -55,16 +54,20 @@ export function CategoryBreakdown({
   }
 
   return (
-    <section className={styles.card}>
-      <header className={styles.header}>
-        <h2>{title}</h2>
-        <span>{categories.length} categorías</span>
+    <section className="min-w-0 rounded-[20px] border border-[#e2e7f0] bg-white px-3 py-[18px] min-[641px]:p-[22px]">
+      <header className="flex items-start justify-between gap-4 min-[641px]:items-center">
+        <h2 className="m-0 text-base text-[#1c2a45]">{title}</h2>
+        <span className="whitespace-nowrap text-[0.7rem] text-[#8993a5]">
+          {categories.length} categorías
+        </span>
       </header>
 
       {chartData.length === 0 ? (
-        <p className={styles.empty}>Sin información en el periodo.</p>
+        <p className="m-0 py-[50px] text-center text-[#8993a5]">
+          Sin información en el periodo.
+        </p>
       ) : (
-        <div className={styles.chart} style={{ height: chartHeight }}>
+        <div className="min-w-0 w-full" style={{ height: chartHeight }}>
           <ResponsiveContainer width="100%" height="100%" minWidth={0}>
             <BarChart
               accessibilityLayer
