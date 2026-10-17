@@ -2,7 +2,9 @@ import { Link } from "react-router"
 import type { HomeCtaProps } from "./interfaces"
 import styles from "./styles.module.css"
 
-export function HomeCta({ registerPath = "/register" }: HomeCtaProps) {
+export function HomeCta({
+  registerPath = "/register",
+}: Readonly<HomeCtaProps>) {
   return (
     <section className={styles.section}>
       <div>

@@ -38,6 +38,7 @@ export function RegisterForm() {
         id="register-password"
         label="Contraseña"
         autoComplete="new-password"
+        placeholder="********"
         error={form.formState.errors.password?.message}
         {...form.register("password")}
       />
@@ -48,6 +49,7 @@ export function RegisterForm() {
         id="register-confirmation"
         label="Confirmar contraseña"
         autoComplete="new-password"
+        placeholder="********"
         error={form.formState.errors.passwordConfirmation?.message}
         {...form.register("passwordConfirmation")}
       />

@@ -1,7 +1,12 @@
 import type { FormFieldProps } from "./interfaces"
 import styles from "./styles.module.css"
 
-export function FormField({ id, label, error, ...inputProps }: FormFieldProps) {
+export function FormField({
+  id,
+  label,
+  error,
+  ...inputProps
+}: Readonly<FormFieldProps>) {
   const errorId = `${id}-error`
 
   return (

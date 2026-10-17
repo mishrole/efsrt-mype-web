@@ -8,11 +8,11 @@ export function BenefitsSection() {
         <h2>
           Menos tiempo ordenando datos.
           <br />
-          Más tiempo dirigiendo el negocio.
+          Más tiempo dirigiendo tu negocio.
         </h2>
         <p>
-          Un flujo simple para registrar operaciones y entender qué está pasando
-          con el dinero.
+          Un flujo simple para registrar operaciones y entender qué pasa con tu
+          dinero.
         </p>
       </div>
 
@@ -23,8 +23,8 @@ export function BenefitsSection() {
           </span>
           <h3>Ventas y gastos claros</h3>
           <p>
-            Registra movimientos con detalle, categorías y evidencias sin perder
-            el historial.
+            Registra movimientos con detalle, categorías y evidencias sin
+            perderle el rastro.
           </p>
         </article>
         <article className={styles.card}>
@@ -32,20 +32,14 @@ export function BenefitsSection() {
             ▦
           </span>
           <h3>Dashboard financiero</h3>
-          <p>
-            Consulta saldos, entradas, salidas, costes y tendencias por el
-            periodo que necesites.
-          </p>
+          <p>Consulta saldos, entradas, salidas, costes y tendencias.</p>
         </article>
         <article className={styles.card}>
           <span className={styles.icon} aria-hidden="true">
             ◎
           </span>
           <h3>Información consistente</h3>
-          <p>
-            Mantén productos, categorías y movimientos vinculados al negocio
-            correcto.
-          </p>
+          <p>Mantén productos, categorías y movimientos en un solo lugar.</p>
         </article>
       </div>
     </section>
