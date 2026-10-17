@@ -1,0 +1,61 @@
+.card {
+  background: #fff;
+  border: 1px solid #e2e7f0;
+  border-radius: 20px;
+  min-width: 0;
+  padding: 24px;
+}
+
+.header {
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.header h2 {
+  color: #182641;
+  margin: 5px 0 0;
+}
+
+.header p {
+  color: #7c8799;
+  font-size: 0.78rem;
+  margin: 2px 0 0;
+}
+
+.eyebrow {
+  color: #2b5fce;
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.chart {
+  height: 340px;
+  min-width: 0;
+  width: 100%;
+}
+
+.empty {
+  color: #778296;
+  margin: 0;
+  padding: 96px 0;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 18px 14px;
+  }
+
+  .header {
+    display: grid;
+    gap: 6px;
+  }
+
+  .chart {
+    height: 280px;
+  }
+}

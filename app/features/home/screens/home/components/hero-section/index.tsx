@@ -5,7 +5,7 @@ import styles from "./styles.module.css"
 export function HeroSection({
   registerPath = "/register",
   loginPath = "/login",
-}: HeroSectionProps) {
+}: Readonly<HeroSectionProps>) {
   return (
     <section className={styles.hero}>
       <div className={styles.copy}>
@@ -19,7 +19,7 @@ export function HeroSection({
         </h1>
         <p className={styles.description}>
           Mype reúne ventas, gastos y saldos en una vista práctica para que
-          puedas controlar el negocio sin depender de hojas dispersas.
+          puedas controlar tu negocio sin depender de hojas dispersas.
         </p>
         <div className={styles.actions}>
           <Link className={styles.primaryAction} to={registerPath}>

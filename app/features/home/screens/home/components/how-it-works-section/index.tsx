@@ -8,8 +8,8 @@ export function HowItWorksSection() {
           <span>Empieza sin complicaciones</span>
           <h2>Tu operación financiera lista en tres pasos.</h2>
           <p>
-            Crea el espacio del negocio, organiza la información base y empieza
-            a registrar el movimiento real.
+            Crea el espacio de tu negocio, organiza la información base y
+            empieza a registrar el movimiento real.
           </p>
         </div>
 
@@ -24,17 +24,17 @@ export function HowItWorksSection() {
           <li>
             <span>02</span>
             <div>
-              <strong>Configura el negocio</strong>
+              <strong>Configura tu negocio</strong>
               <p>Define moneda, saldo de apertura, categorías y productos.</p>
             </div>
           </li>
           <li>
             <span>03</span>
             <div>
-              <strong>Controla la caja</strong>
+              <strong>Controla tu caja</strong>
               <p>
-                Registra ventas y gastos, añade evidencias y consulta el
-                dashboard.
+                Registra ventas y gastos, añade evidencias y consulta tu resumen
+                financiero.
               </p>
             </div>
           </li>

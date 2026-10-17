@@ -11,7 +11,7 @@ export default function RegisterScreen() {
     <AuthLayout
       eyebrow="Empieza hoy"
       title="Crea tu cuenta"
-      description="Registra tus credenciales. Después podrás crear y configurar tu negocio."
+      description="Regístrate para empezar a administrar tu negocio"
       footer={
         <p>
           ¿Ya tienes una cuenta? <Link to="/login">Iniciar sesión</Link>

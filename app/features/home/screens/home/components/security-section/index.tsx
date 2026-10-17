@@ -17,7 +17,7 @@ export function SecuritySection() {
       <ul>
         <li>Autenticación segura</li>
         <li>Permisos por membresía y rol</li>
-        <li>Historial financiero conservado</li>
+        <li>Historial financiero seguro</li>
       </ul>
     </section>
   )

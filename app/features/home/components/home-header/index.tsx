@@ -6,7 +6,7 @@ import { scrollToSection } from "./utils"
 export function HomeHeader({
   loginPath = "/login",
   registerPath = "/register",
-}: HomeHeaderProps) {
+}: Readonly<HomeHeaderProps>) {
   return (
     <header className={styles.header}>
       <div className={styles.content}>

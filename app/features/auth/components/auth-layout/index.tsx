@@ -7,7 +7,7 @@ export function AuthLayout({
   description,
   children,
   footer,
-}: AuthLayoutProps) {
+}: Readonly<AuthLayoutProps>) {
   return (
     <main className={styles.page}>
       <section className={styles.brandPanel} aria-label="Presentación de Mype">
@@ -20,9 +20,9 @@ export function AuthLayout({
 
         <div className={styles.brandCopy}>
           <p className={styles.brandEyebrow}>Control financiero simple</p>
-          <h2>Decisiones más claras para el día a día del negocio.</h2>
+          <h2>Decisiones más claras para el día a día de tu negocio</h2>
           <p>
-            Registra ingresos y gastos, consulta el flujo de caja y mantén la
+            Registra ingresos y gastos, consulta el flujo de caja y mantén tu
             información financiera en un solo lugar.
           </p>
         </div>
@@ -33,7 +33,7 @@ export function AuthLayout({
         >
           <span>Información ordenada</span>
           <span>Acceso seguro</span>
-          <span>Moneda del negocio</span>
+          <span>Control total</span>
         </div>
       </section>
 

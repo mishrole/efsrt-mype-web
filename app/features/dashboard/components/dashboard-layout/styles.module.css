@@ -1,0 +1,21 @@
+.page {
+  background: #f5f7fb;
+  color: #172033;
+  min-height: 100vh;
+  min-width: 320px;
+}
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+.main {
+  margin: 0 auto;
+  padding: 30px 24px 56px;
+  width: min(1420px, 100%);
+}
+@media (max-width: 640px) {
+  .main {
+    padding: 22px 14px 40px;
+  }
+}

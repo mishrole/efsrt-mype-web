@@ -7,7 +7,7 @@ export function PasswordField({
   label,
   error,
   ...inputProps
-}: PasswordFieldProps) {
+}: Readonly<PasswordFieldProps>) {
   const [isVisible, setIsVisible] = useState(false)
   const errorId = `${id}-error`
 

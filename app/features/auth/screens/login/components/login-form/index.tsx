@@ -31,6 +31,7 @@ export function LoginForm() {
         label="Contraseña"
         autoComplete="current-password"
         error={form.formState.errors.password?.message}
+        placeholder="********"
         {...form.register("password")}
       />
       <button className={styles.submit} type="submit" disabled={isSubmitting}>
