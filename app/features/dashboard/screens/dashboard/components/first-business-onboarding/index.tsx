@@ -126,6 +126,7 @@ export function FirstBusinessOnboarding({
                     type="number"
                     inputMode="decimal"
                     step="0.01"
+                    aria-label="Saldo de apertura"
                     aria-invalid={Boolean(
                       formState.errors.openingBalanceAmount,
                     )}

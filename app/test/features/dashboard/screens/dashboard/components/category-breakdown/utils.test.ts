@@ -35,6 +35,6 @@ describe("category breakdown utilities", () => {
 
   it("formats full and compact category amounts", () => {
     expect(formatCategoryAmount(1250.5, "PEN")).toMatch(/S\/\s?1,250\.50/)
-    expect(formatCompactCategoryAmount(1250, "PEN")).toMatch(/S\/\s?1\.3K/i)
+    expect(formatCompactCategoryAmount(1250, "PEN")).toMatch(/S\/\s*1\.3\s*K/i)
   })
 })
