@@ -41,7 +41,7 @@ describe("cash flow chart utilities", () => {
   })
 
   it("formats full and compact currency values", () => {
-    expect(formatCurrency(1000, "PEN")).toMatch(/S\/\s?1,000\.00/)
-    expect(formatCompactCurrency(1000, "PEN")).toMatch(/S\/\s*1\s*K/i)
+    expect(formatCurrency(1000, "PEN")).toMatch(/^S\/\s*1,000\.00$/)
+    expect(formatCompactCurrency(1000, "PEN")).toMatch(/^S\/\s*1(?:\.0)?\s*K$/i)
   })
 })
