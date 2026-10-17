@@ -23,7 +23,7 @@ vi.mock("../../../../../services/auth/register", () => ({
 const registerMock = vi.mocked(register)
 
 function submitRegister(): void {
-  fireEvent.change(screen.getByLabelText("Nombre para mostrar"), {
+  fireEvent.change(screen.getByLabelText("Nombre"), {
     target: { value: "Mitchell" },
   })
   fireEvent.change(screen.getByLabelText("Correo electrónico"), {
@@ -61,8 +61,8 @@ describe("RegisterScreen", () => {
       </MemoryRouter>,
     )
 
-    fireEvent.change(screen.getByLabelText("Nombre para mostrar"), {
-      target: { value: " Mitchell Rodríguez " },
+    fireEvent.change(screen.getByRole("textbox", { name: /nombre/i }), {
+      target: { value: "Mitchell Rodríguez" },
     })
     fireEvent.change(screen.getByLabelText("Correo electrónico"), {
       target: { value: " correo@gmail.com " },
@@ -94,7 +94,7 @@ describe("RegisterScreen", () => {
       </MemoryRouter>,
     )
 
-    fireEvent.change(screen.getByLabelText("Nombre para mostrar"), {
+    fireEvent.change(screen.getByLabelText("Nombre"), {
       target: { value: "Mitchell" },
     })
     fireEvent.change(screen.getByLabelText("Correo electrónico"), {
@@ -128,7 +128,7 @@ describe("RegisterScreen", () => {
       </MemoryRouter>,
     )
 
-    fireEvent.change(screen.getByLabelText("Nombre para mostrar"), {
+    fireEvent.change(screen.getByLabelText("Nombre"), {
       target: { value: "Mitchell" },
     })
     fireEvent.change(screen.getByLabelText("Correo electrónico"), {

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import DashboardScreen, { meta } from "~/features/dashboard/screens/dashboard"
 import { useAuthSessionStore } from "~/features/auth/stores/session"
+import DashboardScreen, { meta } from "~/features/dashboard/screens/dashboard"
 import { useDashboard } from "~/features/dashboard/screens/dashboard/hooks/use-dashboard"
 import { FinancialDashboardGranularity } from "~/services/financial-dashboard/get-financial-dashboard/interfaces"
 
@@ -174,6 +174,12 @@ describe("DashboardScreen", () => {
     expect(screen.getByText("Cash flow chart")).toBeInTheDocument()
     expect(screen.getByText("Ventas por categoría")).toBeInTheDocument()
     expect(screen.getByText("Gastos por categoría")).toBeInTheDocument()
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Abrir menú de usuario",
+      }),
+    )
+
     expect(screen.getByText("Mitchell")).toBeInTheDocument()
   })
 })

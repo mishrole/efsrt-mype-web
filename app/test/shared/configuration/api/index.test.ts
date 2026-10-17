@@ -16,13 +16,12 @@ describe("API configuration", () => {
     expect(apiConfiguration.baseUrl).toBe("https://api.example.test")
   })
 
-  it("uses the local URL when VITE_API_BASE_URL is empty", async () => {
-    vi.stubEnv("VITE_API_BASE_URL", "   ")
+  it("throws when VITE_API_BASE_URL is empty", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", "")
     vi.resetModules()
 
-    const { apiConfiguration } =
-      await import("../../../../shared/configuration/api")
-
-    expect(apiConfiguration.baseUrl).toBe("http://localhost:5010")
+    await expect(import("~/shared/configuration/api")).rejects.toThrow(
+      "VITE_API_BASE_URL is not configured",
+    )
   })
 })
