@@ -208,16 +208,19 @@ describe("useDashboard", () => {
 
     const abortCountBeforeChangingBusiness = abortDashboard.mock.calls.length
 
-    act(() => {
+    await act(async () => {
       result.current.selectBusiness(secondBusiness.businessId)
+
+      await Promise.resolve()
+    })
+
+    await waitFor(() => {
+      expect(result.current.currentBusinessId).toBe(secondBusiness.businessId)
     })
 
     expect(abortDashboard.mock.calls.length).toBeGreaterThan(
       abortCountBeforeChangingBusiness,
     )
-
-    expect(result.current.currentBusinessId).toBe(secondBusiness.businessId)
-    expect(result.current.dashboard).toBeNull()
   })
 
   it("reloads the dashboard when filters change", async () => {
@@ -381,12 +384,25 @@ describe("useDashboard", () => {
       expect(result.current.dashboard).toEqual(dashboard)
     })
 
-    await expect(result.current.logoutCurrentSession()).rejects.toThrow(
-      "network",
-    )
+    let logoutError: unknown
 
-    expect(navigate).toHaveBeenCalledWith("/login")
+    await act(async () => {
+      try {
+        await result.current.logoutCurrentSession()
+      } catch (exception) {
+        logoutError = exception
+      }
+    })
+
+    expect(logoutError).toEqual(new Error("network"))
+
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith("/login")
+    })
+
     expect(abortBusinesses).toHaveBeenCalled()
     expect(abortDashboard).toHaveBeenCalled()
+    expect(useAuthSessionStore.getState().accessToken).toBeNull()
+    expect(useBusinessContextStore.getState().currentBusinessId).toBeNull()
   })
 })
