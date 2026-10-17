@@ -10,8 +10,7 @@ describe("API configuration", () => {
     vi.stubEnv("VITE_API_BASE_URL", " https://api.example.test ")
     vi.resetModules()
 
-    const { apiConfiguration } =
-      await import("../../../../shared/configuration/api")
+    const { apiConfiguration } = await import("~/shared/configuration/api")
 
     expect(apiConfiguration.baseUrl).toBe("https://api.example.test")
   })
