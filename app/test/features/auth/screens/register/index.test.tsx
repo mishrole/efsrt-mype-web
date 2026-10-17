@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter } from "react-router"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { useAuthenticatedRouteRedirect } from "~/shared/hooks/use-authenticated-route-redirect"
 import RegisterScreen from "../../../../../features/auth/screens/register"
 import { register } from "../../../../../services/auth/register"
 
@@ -19,6 +20,14 @@ vi.mock("react-router", async () => {
 vi.mock("../../../../../services/auth/register", () => ({
   register: vi.fn(),
 }))
+
+vi.mock("~/shared/hooks/use-authenticated-route-redirect", () => ({
+  useAuthenticatedRouteRedirect: vi.fn(),
+}))
+
+const useAuthenticatedRouteRedirectMock = vi.mocked(
+  useAuthenticatedRouteRedirect,
+)
 
 const registerMock = vi.mocked(register)
 
@@ -182,5 +191,18 @@ describe("RegisterScreen", () => {
       "No fue posible conectar con el servicio.",
     )
     expect(navigate).not.toHaveBeenCalled()
+  })
+
+  it("renders loading while an authenticated user is being redirected", () => {
+    useAuthenticatedRouteRedirectMock.mockReturnValue(true)
+
+    render(<RegisterScreen />)
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Cargando tu negocio...",
+    )
+    expect(
+      screen.queryByRole("heading", { name: "Crea tu cuenta" }),
+    ).not.toBeInTheDocument()
   })
 })

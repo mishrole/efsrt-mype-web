@@ -58,4 +58,30 @@ describe("DashboardHeader", () => {
     expect(onBusinessChange).toHaveBeenCalledWith("business-2")
     expect(onLogout).toHaveBeenCalledOnce()
   })
+
+  it("uses the fallback user and opens and closes the movement modal", () => {
+    render(
+      <DashboardHeader
+        businesses={businesses}
+        currentBusinessId="business-1"
+        user={null}
+        onBusinessChange={vi.fn()}
+        onLogout={vi.fn().mockResolvedValue(undefined)}
+      />,
+    )
+
+    expect(
+      screen.getByRole("button", { name: "Abrir menú de usuario" }),
+    ).toHaveTextContent("U")
+    fireEvent.click(
+      screen.getByRole("button", { name: "Registrar movimiento" }),
+    )
+    expect(
+      screen.getByRole("dialog", { name: "Registrar movimiento" }),
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar" }))
+    expect(
+      screen.queryByRole("dialog", { name: "Registrar movimiento" }),
+    ).not.toBeInTheDocument()
+  })
 })
