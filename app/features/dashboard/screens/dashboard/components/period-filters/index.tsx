@@ -1,16 +1,17 @@
 import { FinancialDashboardGranularity } from "../../../../../../services/financial-dashboard/get-financial-dashboard/interfaces"
+import { CLASSNAMES } from "./constants"
 import type { PeriodFiltersProps } from "./interfaces"
-import styles from "./styles.module.css"
 
 export function PeriodFilters({
   values,
   onChange,
 }: Readonly<PeriodFiltersProps>) {
   return (
-    <div className={styles.filters}>
-      <label>
-        <span>Desde</span>
+    <div className="flex flex-wrap gap-3">
+      <label className={CLASSNAMES.labelClassName}>
+        <span className={CLASSNAMES.captionClassName}>Desde</span>
         <input
+          className={CLASSNAMES.controlClassName}
           type="date"
           value={values.dateFrom}
           onChange={(event) =>
@@ -18,9 +19,10 @@ export function PeriodFilters({
           }
         />
       </label>
-      <label>
-        <span>Hasta</span>
+      <label className={CLASSNAMES.labelClassName}>
+        <span className={CLASSNAMES.captionClassName}>Hasta</span>
         <input
+          className={CLASSNAMES.controlClassName}
           type="date"
           value={values.dateTo}
           onChange={(event) =>
@@ -28,9 +30,10 @@ export function PeriodFilters({
           }
         />
       </label>
-      <label>
-        <span>Agrupación</span>
+      <label className={CLASSNAMES.labelClassName}>
+        <span className={CLASSNAMES.captionClassName}>Agrupación</span>
         <select
+          className={CLASSNAMES.controlClassName}
           value={values.granularity}
           onChange={(event) =>
             onChange({

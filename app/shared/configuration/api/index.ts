@@ -1,7 +1,11 @@
 import type { ApiConfiguration } from "./interfaces"
 
-const DEFAULT_API_BASE_URL = "http://localhost:5010"
+const BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim()
+
+if (!BASE_URL) {
+  throw new Error("VITE_API_BASE_URL is not configured")
+}
 
 export const apiConfiguration: ApiConfiguration = {
-  baseUrl: import.meta.env.VITE_API_BASE_URL?.trim() || DEFAULT_API_BASE_URL,
+  baseUrl: BASE_URL,
 }

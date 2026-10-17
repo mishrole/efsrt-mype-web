@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
+import type { RequestOptions } from "~/shared/http/client/interfaces"
 import { login } from "../../../../services/auth/login"
 import { API_ROUTES } from "../../../../shared/constants/api"
 import { request } from "../../../../shared/http/client"
@@ -32,11 +33,14 @@ describe("login service", () => {
 
     await expect(login(payload, controller.signal)).resolves.toEqual(response)
 
-    expect(requestMock).toHaveBeenCalledWith(API_ROUTES.AUTH.LOGIN, {
+    const options: RequestOptions = {
       method: "POST",
       body: payload,
       credentials: "include",
       signal: controller.signal,
-    })
+      skipAuthRefresh: true,
+    }
+
+    expect(requestMock).toHaveBeenCalledWith(API_ROUTES.AUTH.LOGIN, options)
   })
 })

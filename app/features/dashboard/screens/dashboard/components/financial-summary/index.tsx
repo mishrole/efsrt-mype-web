@@ -1,29 +1,26 @@
 import { money } from "~/shared/utils/money"
+import { TONE_CLASSNAMES } from "./constants"
 import type { FinancialSummaryProps } from "./interfaces"
-import styles from "./styles.module.css"
+import { buildMetrics } from "./utils"
 
 export function FinancialSummary({
   dashboard,
 }: Readonly<FinancialSummaryProps>) {
-  const metrics = [
-    ["Saldo de cierre", dashboard.closingBalance, "primary"],
-    ["Ingresos", dashboard.cashInflow, "positive"],
-    ["Egresos", dashboard.cashOutflow, "negative"],
-    [
-      "Flujo neto",
-      dashboard.netCashFlow,
-      dashboard.netCashFlow >= 0 ? "positive" : "negative",
-    ],
-    ["Margen bruto estimado", dashboard.estimatedGrossMargin, "standard"],
-    ["Venta promedio", dashboard.averageSaleAmount, "standard"],
-  ] as const
-
+  const metrics = buildMetrics(dashboard)
   return (
-    <section className={styles.grid} aria-label="Resumen financiero">
+    <section
+      className="grid grid-cols-2 gap-[15px] min-[621px]:grid-cols-3 min-[1101px]:grid-cols-6"
+      aria-label="Resumen financiero"
+    >
       {metrics.map(([label, value, tone]) => (
-        <article key={label} className={`${styles.card} ${styles[tone]}`}>
-          <span>{label}</span>
-          <strong>{money(value, dashboard.currencyCode)}</strong>
+        <article
+          key={label}
+          className={`grid min-w-0 gap-[9px] rounded-2xl border border-[#e2e7f0] bg-white p-[15px] min-[621px]:p-[19px] ${TONE_CLASSNAMES[tone]}`}
+        >
+          <span className="text-xs font-bold text-[#748096]">{label}</span>
+          <strong className="overflow-hidden text-[clamp(1rem,1.8vw,1.35rem)] text-ellipsis text-[#1b2944]">
+            {money(value, dashboard.currencyCode)}
+          </strong>
         </article>
       ))}
     </section>

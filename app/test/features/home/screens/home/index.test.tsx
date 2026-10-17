@@ -27,7 +27,7 @@ describe("HomeScreen", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: /entiende tu caja.*decide con claridad/i,
+        name: /conoce los números.*que mueven tu negocio/i,
       }),
     ).toBeInTheDocument()
 
