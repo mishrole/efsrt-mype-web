@@ -44,16 +44,11 @@ describe("DashboardHeader", () => {
     fireEvent.change(screen.getByLabelText("Negocio"), {
       target: { value: "business-2" },
     })
-
     fireEvent.click(
-      screen.getByRole("button", {
-        name: "Abrir menú de usuario",
-      }),
+      screen.getByRole("button", { name: "Abrir menú de usuario" }),
     )
-
     expect(screen.getByText("Mitchell Rodríguez")).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole("button", { name: "Cerrar sesión" }))
+    fireEvent.click(screen.getByRole("menuitem", { name: "Cerrar sesión" }))
 
     expect(onBusinessChange).toHaveBeenCalledWith("business-2")
     expect(onLogout).toHaveBeenCalledOnce()

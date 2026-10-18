@@ -13,6 +13,6 @@ export interface UserMenuProps {
   email: string
   open: boolean
   shortcuts: UserMenuShortcut[]
-  onClose: () => void
+  onOpenChange: (open: boolean) => void
   onLogout: () => Promise<void>
 }

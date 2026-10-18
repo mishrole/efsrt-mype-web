@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { UserMenu } from "~/shared/components/user-menu"
-import { getUserInitials } from "~/shared/components/user-menu/utils"
 import { CreateMovementPlaceholder } from "../create-movement-placeholder"
 import type { DashboardHeaderProps } from "./interfaces"
 
@@ -24,16 +23,12 @@ export function DashboardHeader({
     setMovementModalOpen(false)
   }
 
-  function toggleUserMenu(): void {
-    setUserMenuOpen((current) => !current)
-  }
-
-  function closeUserMenu(): void {
-    setUserMenuOpen(false)
+  function handleUserMenuOpenChange(open: boolean): void {
+    setUserMenuOpen(open)
   }
 
   async function handleLogout(): Promise<void> {
-    closeUserMenu()
+    setUserMenuOpen(false)
     await onLogout()
   }
 
@@ -80,25 +75,14 @@ export function DashboardHeader({
             </span>
             <b className="hidden min-[721px]:inline">Registrar movimiento</b>
           </button>
-          <div className="relative">
-            <button
-              className="size-[42px] cursor-pointer rounded-full border border-[#c9d8fb] bg-[#e8efff] text-[0.72rem] font-black text-[#2458d1]"
-              type="button"
-              aria-label="Abrir menú de usuario"
-              aria-expanded={userMenuOpen}
-              onClick={toggleUserMenu}
-            >
-              {getUserInitials(displayName)}
-            </button>
-            <UserMenu
-              displayName={displayName}
-              email={user?.email ?? ""}
-              open={userMenuOpen}
-              shortcuts={shortcuts}
-              onClose={closeUserMenu}
-              onLogout={handleLogout}
-            />
-          </div>
+          <UserMenu
+            displayName={displayName}
+            email={user?.email ?? ""}
+            open={userMenuOpen}
+            shortcuts={shortcuts}
+            onOpenChange={handleUserMenuOpenChange}
+            onLogout={handleLogout}
+          />
         </div>
       </div>
       <CreateMovementPlaceholder
