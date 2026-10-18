@@ -9,4 +9,8 @@ export default [
     APP_PAGES_ROUTES.DASHBOARD,
     "features/dashboard/screens/dashboard/index.tsx",
   ),
+  route(
+    APP_PAGES_ROUTES.PRODUCTS,
+    "features/products/screens/product-list/index.tsx",
+  ),
 ] satisfies RouteConfig

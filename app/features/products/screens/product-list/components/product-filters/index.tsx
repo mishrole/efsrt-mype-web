@@ -1,0 +1,138 @@
+import type { ChangeEvent, FormEvent } from "react"
+import { SearchIcon, XIcon } from "lucide-react"
+import { PRODUCT_STATUS_FILTERS } from "~/features/products/constants"
+import { Button } from "~/shared/components/ui/button"
+import { Input } from "~/shared/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/shared/components/ui/select"
+import type { ProductFiltersProps, ProductFilterValues } from "./interfaces"
+
+export function ProductFilters({
+  categories,
+  values,
+  disabled = false,
+  onChange,
+  onApply,
+  onClear,
+}: Readonly<ProductFiltersProps>) {
+  function handleSearchChange(event: ChangeEvent<HTMLInputElement>): void {
+    onChange({ ...values, search: event.target.value })
+  }
+
+  function handleCategoryChange(categoryId: string | null): void {
+    if (categoryId !== null) onChange({ ...values, categoryId })
+  }
+
+  function handleStatusChange(status: string | null): void {
+    if (status !== null)
+      onChange({ ...values, status: status as ProductFilterValues["status"] })
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault()
+    onApply()
+  }
+
+  return (
+    <form
+      className="grid gap-3 rounded-2xl border border-[#e1e6ef] bg-white p-4 min-[721px]:grid-cols-[minmax(220px,1fr)_minmax(180px,auto)_minmax(150px,auto)_auto_auto] min-[721px]:items-end"
+      onSubmit={handleSubmit}
+    >
+      <label className="grid gap-1.5">
+        <span className="text-xs font-bold text-[#748096] uppercase">
+          Buscar
+        </span>
+        <div className="relative">
+          <SearchIcon
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#8490a3]"
+            aria-hidden="true"
+          />
+          <Input
+            aria-label="Buscar productos"
+            className="h-10 rounded-xl border-[#d9e0ec] bg-white pl-9"
+            value={values.search}
+            onChange={handleSearchChange}
+            disabled={disabled}
+          />
+        </div>
+      </label>
+      <div className="grid gap-1.5">
+        <span className="text-xs font-bold text-[#748096] uppercase">
+          Categoría
+        </span>
+        <Select
+          value={values.categoryId}
+          onValueChange={handleCategoryChange}
+          disabled={disabled}
+        >
+          <SelectTrigger
+            aria-label="Categoría"
+            className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[180px]"
+          >
+            <SelectValue>
+              {categories.find((category) => category.id === values.categoryId)
+                ?.name ?? "Todas"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="start" alignItemWithTrigger={false}>
+            <SelectItem value="all">Todas</SelectItem>
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid gap-1.5">
+        <span className="text-xs font-bold text-[#748096] uppercase">
+          Estado
+        </span>
+        <Select
+          value={values.status}
+          onValueChange={handleStatusChange}
+          disabled={disabled}
+        >
+          <SelectTrigger
+            aria-label="Estado"
+            className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]"
+          >
+            <SelectValue>
+              {values.status === PRODUCT_STATUS_FILTERS.active
+                ? "Activos"
+                : values.status === PRODUCT_STATUS_FILTERS.inactive
+                  ? "Inactivos"
+                  : "Todos"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent align="start" alignItemWithTrigger={false}>
+            <SelectItem value={PRODUCT_STATUS_FILTERS.all}>Todos</SelectItem>
+            <SelectItem value={PRODUCT_STATUS_FILTERS.active}>
+              Activos
+            </SelectItem>
+            <SelectItem value={PRODUCT_STATUS_FILTERS.inactive}>
+              Inactivos
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Button type="submit" disabled={disabled}>
+        Aplicar
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        disabled={disabled}
+        onClick={onClear}
+      >
+        <XIcon data-icon="inline-start" aria-hidden="true" />
+        Limpiar
+      </Button>
+    </form>
+  )
+}
