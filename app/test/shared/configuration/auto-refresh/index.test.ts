@@ -16,7 +16,10 @@ describe("configureAutomaticSessionRefresh", () => {
 
   it("connects refresh and session store operations to the HTTP client", async () => {
     const setSession = vi.spyOn(useAuthSessionStore.getState(), "setSession")
-    const clearSession = vi.spyOn(useAuthSessionStore.getState(), "clearSession")
+    const clearSession = vi.spyOn(
+      useAuthSessionStore.getState(),
+      "clearSession",
+    )
 
     configureAutomaticSessionRefresh()
 
