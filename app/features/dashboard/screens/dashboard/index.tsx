@@ -1,3 +1,4 @@
+import { useBusinessContextStore } from "~/features/business/stores/business-context"
 import { FullScreenLoading } from "~/shared/components/full-screen-loading"
 import { useAuthSessionStore } from "../../../auth/stores/session"
 import { DashboardHeader } from "../../components/dashboard-header"
@@ -15,7 +16,10 @@ export function meta() {
 export default function DashboardScreen() {
   const user = useAuthSessionStore((state) => state.user)
   const accessToken = useAuthSessionStore((state) => state.accessToken)
+  const storedPermissions =
+    useBusinessContextStore((state) => state.context?.permissions) ?? []
   const dashboardState = useDashboard()
+
   if (dashboardState.needsOnboarding && accessToken)
     return (
       <FirstBusinessOnboarding
@@ -30,6 +34,7 @@ export default function DashboardScreen() {
       businesses={dashboardState.businesses}
       currentBusinessId={dashboardState.currentBusinessId}
       user={user}
+      permissions={storedPermissions}
       onBusinessChange={dashboardState.selectBusiness}
       onLogout={dashboardState.logoutCurrentSession}
     />

@@ -1,16 +1,24 @@
 import { Modal } from "~/shared/components/modal"
+import { PLACEHOLDER_CONTENT } from "./constants"
 import type { CreateMovementPlaceholderProps } from "./interfaces"
 
 export function CreateMovementPlaceholder({
   open,
+  itemType,
   onClose,
 }: Readonly<CreateMovementPlaceholderProps>) {
+  if (!itemType) {
+    return null
+  }
+
+  const content = PLACEHOLDER_CONTENT[itemType]
+
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title="Registrar movimiento"
-      description="El flujo de ventas y gastos se conectará en el siguiente incremento."
+      title={content.title}
+      description={content.description}
     >
       <div className="flex items-center gap-3.5 rounded-[14px] border border-dashed border-[#9eb7ed] bg-[#f5f8ff] p-[22px]">
         <span
@@ -19,9 +27,7 @@ export function CreateMovementPlaceholder({
         >
           +
         </span>
-        <p className="m-0 text-[#56647c]">
-          Elige venta o gasto cuando el módulo de movimientos esté disponible.
-        </p>
+        <p className="m-0 text-[#56647c]">{content.message}</p>
       </div>
     </Modal>
   )

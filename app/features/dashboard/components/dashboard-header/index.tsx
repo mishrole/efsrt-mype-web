@@ -1,26 +1,40 @@
 import { useState } from "react"
 import { UserMenu } from "~/shared/components/user-menu"
+import { BusinessSelect } from "../business-select"
 import { CreateMovementPlaceholder } from "../create-movement-placeholder"
+import { NewMenu } from "../new-menu"
+import {
+  DASHBOARD_PERMISSIONS,
+  NEW_ITEM_TYPES,
+  type NewItemType,
+} from "./constants"
 import type { DashboardHeaderProps } from "./interfaces"
 
 export function DashboardHeader({
   businesses,
   currentBusinessId,
+  permissions,
   user,
   shortcuts = [],
   onBusinessChange,
   onLogout,
 }: Readonly<DashboardHeaderProps>) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [movementModalOpen, setMovementModalOpen] = useState(false)
+  const [newItemType, setNewItemType] = useState<NewItemType | null>(null)
   const displayName = user?.displayName ?? "Usuario"
+  const canCreateMovement = permissions.includes(
+    DASHBOARD_PERMISSIONS.movementCreate,
+  )
+  const canCreateProduct = permissions.includes(
+    DASHBOARD_PERMISSIONS.productCreate,
+  )
 
-  function openMovementModal(): void {
-    setMovementModalOpen(true)
+  function openCreation(itemType: NewItemType): void {
+    setNewItemType(itemType)
   }
 
-  function closeMovementModal(): void {
-    setMovementModalOpen(false)
+  function closeCreation(): void {
+    setNewItemType(null)
   }
 
   function handleUserMenuOpenChange(open: boolean): void {
@@ -49,32 +63,18 @@ export function DashboardHeader({
           <b className="hidden text-[1.18rem] min-[721px]:inline">Mype</b>
         </a>
         <div className="flex items-center gap-2 min-[721px]:gap-3">
-          <label className="flex items-center gap-[9px]">
-            <span className="hidden text-[0.72rem] font-extrabold text-[#748096] uppercase min-[721px]:inline">
-              Negocio
-            </span>
-            <select
-              className="min-h-[42px] max-w-[138px] rounded-[10px] border border-[#d9e0ec] bg-[#f7f9fd] py-0 pr-9 pl-3 text-[#263653] min-[721px]:max-w-none"
-              value={currentBusinessId}
-              onChange={(event) => onBusinessChange(event.target.value)}
-            >
-              {businesses.map((business) => (
-                <option key={business.businessId} value={business.businessId}>
-                  {business.displayName}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            className="flex size-[42px] min-h-[42px] cursor-pointer items-center justify-center gap-2 rounded-full border-0 bg-[#2458d1] p-0 font-extrabold text-white min-[721px]:h-auto min-[721px]:w-auto min-[721px]:rounded-[11px] min-[721px]:px-[15px]"
-            type="button"
-            onClick={openMovementModal}
-          >
-            <span className="text-xl" aria-hidden="true">
-              +
-            </span>
-            <b className="hidden min-[721px]:inline">Registrar movimiento</b>
-          </button>
+          <BusinessSelect
+            businesses={businesses}
+            currentBusinessId={currentBusinessId}
+            onChange={onBusinessChange}
+          />
+          <NewMenu
+            canCreateMovement={canCreateMovement}
+            canCreateProduct={canCreateProduct}
+            onCreateSale={() => openCreation(NEW_ITEM_TYPES.sale)}
+            onCreateExpense={() => openCreation(NEW_ITEM_TYPES.expense)}
+            onCreateProduct={() => openCreation(NEW_ITEM_TYPES.product)}
+          />
           <UserMenu
             displayName={displayName}
             email={user?.email ?? ""}
@@ -86,8 +86,9 @@ export function DashboardHeader({
         </div>
       </div>
       <CreateMovementPlaceholder
-        open={movementModalOpen}
-        onClose={closeMovementModal}
+        open={newItemType !== null}
+        itemType={newItemType}
+        onClose={closeCreation}
       />
     </header>
   )
