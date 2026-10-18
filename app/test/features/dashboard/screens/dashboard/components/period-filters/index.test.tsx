@@ -6,43 +6,66 @@ import { FinancialDashboardGranularity } from "../../../../../../../services/fin
 describe("PeriodFilters", () => {
   it("emits the selected start date, end date and granularity", () => {
     const onChange = vi.fn()
-    const values = {
+
+    const initialValues = {
       dateFrom: "2026-10-01",
       dateTo: "2026-10-16",
       granularity: FinancialDashboardGranularity.Auto,
     }
 
     const { rerender } = render(
-      <PeriodFilters values={values} onChange={onChange} />,
+      <PeriodFilters values={initialValues} onChange={onChange} />,
     )
 
     fireEvent.change(screen.getByLabelText("Desde"), {
-      target: { value: "2026-10-02" },
+      target: {
+        value: "2026-10-02",
+      },
     })
 
-    expect(onChange).toHaveBeenLastCalledWith({
-      ...values,
+    const valuesWithUpdatedStartDate = {
+      ...initialValues,
       dateFrom: "2026-10-02",
-    })
+    }
 
-    const changedDates = { ...values, dateFrom: "2026-10-02" }
-    rerender(<PeriodFilters values={changedDates} onChange={onChange} />)
+    expect(onChange).toHaveBeenLastCalledWith(valuesWithUpdatedStartDate)
+
+    rerender(
+      <PeriodFilters values={valuesWithUpdatedStartDate} onChange={onChange} />,
+    )
 
     fireEvent.change(screen.getByLabelText("Hasta"), {
-      target: { value: "2026-10-20" },
+      target: {
+        value: "2026-10-20",
+      },
     })
 
-    expect(onChange).toHaveBeenLastCalledWith({
-      ...changedDates,
+    const valuesWithUpdatedDates = {
+      ...valuesWithUpdatedStartDate,
       dateTo: "2026-10-20",
+    }
+
+    expect(onChange).toHaveBeenLastCalledWith(valuesWithUpdatedDates)
+
+    rerender(
+      <PeriodFilters values={valuesWithUpdatedDates} onChange={onChange} />,
+    )
+
+    fireEvent.click(
+      screen.getByRole("combobox", {
+        name: "Agrupación",
+      }),
+    )
+
+    const monthOption = screen.getByRole("option", {
+      name: "Mes",
     })
 
-    fireEvent.change(screen.getByLabelText("Agrupación"), {
-      target: { value: String(FinancialDashboardGranularity.Month) },
-    })
+    fireEvent.pointerDown(monthOption)
+    fireEvent.click(monthOption)
 
     expect(onChange).toHaveBeenLastCalledWith({
-      ...changedDates,
+      ...valuesWithUpdatedDates,
       granularity: FinancialDashboardGranularity.Month,
     })
   })

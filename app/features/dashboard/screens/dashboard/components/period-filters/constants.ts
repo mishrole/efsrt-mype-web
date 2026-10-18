@@ -1,3 +1,14 @@
+import { FinancialDashboardGranularity } from "../../../../../../services/financial-dashboard/get-financial-dashboard/interfaces"
+
+export const GRANULARITY_LABELS: Record<FinancialDashboardGranularity, string> =
+  {
+    [FinancialDashboardGranularity.Auto]: "Automática",
+    [FinancialDashboardGranularity.Day]: "Día",
+    [FinancialDashboardGranularity.Week]: "Semana",
+    [FinancialDashboardGranularity.Month]: "Mes",
+    [FinancialDashboardGranularity.Year]: "Año",
+  }
+
 export const CLASSNAMES = {
   labelClassName: "grid gap-[5px]",
   captionClassName: "text-[0.68rem] font-extrabold text-[#748096] uppercase",
