@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import {
   Select,
   SelectContent,
@@ -6,25 +7,50 @@ import {
   SelectValue,
 } from "~/shared/components/ui/select"
 import { FinancialDashboardGranularity } from "../../../../../../services/financial-dashboard/get-financial-dashboard/interfaces"
-import { CLASSNAMES, GRANULARITY_LABELS } from "./constants"
-import type { PeriodFiltersProps } from "./interfaces"
+import { DateFilter } from "../date-filter"
+import { GRANULARITY_LABELS, GRANULARITY_OPTIONS } from "./constants"
+import type { PeriodFiltersProps, PeriodFilterValues } from "./interfaces"
 
 export function PeriodFilters({
   values,
   onChange,
 }: Readonly<PeriodFiltersProps>) {
+  const [draftValues, setDraftValues] = useState<PeriodFilterValues>(values)
+
+  useEffect(() => {
+    function synchronizeDraftValues(): void {
+      setDraftValues(values)
+    }
+
+    synchronizeDraftValues()
+  }, [values])
+
+  function emitCompleteFilters(nextValues: PeriodFilterValues): void {
+    if (!nextValues.dateFrom || !nextValues.dateTo) {
+      return
+    }
+
+    onChange(nextValues)
+  }
+
   function handleDateFromChange(dateFrom: string): void {
-    onChange({
-      ...values,
+    const nextValues = {
+      ...draftValues,
       dateFrom,
-    })
+    }
+
+    setDraftValues(nextValues)
+    emitCompleteFilters(nextValues)
   }
 
   function handleDateToChange(dateTo: string): void {
-    onChange({
-      ...values,
+    const nextValues = {
+      ...draftValues,
       dateTo,
-    })
+    }
+
+    setDraftValues(nextValues)
+    emitCompleteFilters(nextValues)
   }
 
   function handleGranularityChange(granularity: string | null): void {
@@ -32,68 +58,53 @@ export function PeriodFilters({
       return
     }
 
-    onChange({
-      ...values,
+    const nextValues = {
+      ...draftValues,
       granularity: Number(granularity) as FinancialDashboardGranularity,
-    })
+    }
+
+    setDraftValues(nextValues)
+    emitCompleteFilters(nextValues)
   }
 
   return (
     <div className="flex flex-wrap gap-3">
-      <label className={CLASSNAMES.labelClassName}>
-        <span className={CLASSNAMES.captionClassName}>Desde</span>
-        <input
-          className={CLASSNAMES.controlClassName}
-          type="date"
-          value={values.dateFrom}
-          onChange={(event) => handleDateFromChange(event.target.value)}
-        />
-      </label>
+      <DateFilter
+        label="Desde"
+        value={draftValues.dateFrom}
+        onChange={handleDateFromChange}
+      />
 
-      <label className={CLASSNAMES.labelClassName}>
-        <span className={CLASSNAMES.captionClassName}>Hasta</span>
-        <input
-          className={CLASSNAMES.controlClassName}
-          type="date"
-          value={values.dateTo}
-          onChange={(event) => handleDateToChange(event.target.value)}
-        />
-      </label>
+      <DateFilter
+        label="Hasta"
+        value={draftValues.dateTo}
+        onChange={handleDateToChange}
+      />
 
-      <div className={CLASSNAMES.labelClassName}>
-        <span className={CLASSNAMES.captionClassName}>Agrupación</span>
+      <div className="grid gap-[5px]">
+        <span className="text-[0.68rem] font-extrabold text-[#748096] uppercase">
+          Agrupación
+        </span>
 
         <Select
-          value={String(values.granularity)}
+          value={String(draftValues.granularity)}
           onValueChange={handleGranularityChange}
         >
           <SelectTrigger
             aria-label="Agrupación"
             className="min-h-10 min-w-[9.5rem] rounded-[10px] border-[#d9e0ec] bg-white px-[11px] text-[#2a3852]"
           >
-            <SelectValue>{GRANULARITY_LABELS[values.granularity]}</SelectValue>
+            <SelectValue>
+              {GRANULARITY_LABELS[draftValues.granularity]}
+            </SelectValue>
           </SelectTrigger>
 
           <SelectContent align="start" alignItemWithTrigger={false}>
-            <SelectItem value={String(FinancialDashboardGranularity.Auto)}>
-              {GRANULARITY_LABELS[FinancialDashboardGranularity.Auto]}
-            </SelectItem>
-
-            <SelectItem value={String(FinancialDashboardGranularity.Day)}>
-              {GRANULARITY_LABELS[FinancialDashboardGranularity.Day]}
-            </SelectItem>
-
-            <SelectItem value={String(FinancialDashboardGranularity.Week)}>
-              {GRANULARITY_LABELS[FinancialDashboardGranularity.Week]}
-            </SelectItem>
-
-            <SelectItem value={String(FinancialDashboardGranularity.Month)}>
-              {GRANULARITY_LABELS[FinancialDashboardGranularity.Month]}
-            </SelectItem>
-
-            <SelectItem value={String(FinancialDashboardGranularity.Year)}>
-              {GRANULARITY_LABELS[FinancialDashboardGranularity.Year]}
-            </SelectItem>
+            {GRANULARITY_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

@@ -3,11 +3,15 @@ import { FinancialDashboardGranularity } from "../../../../../../services/financ
 export const GRANULARITY_LABELS: Record<FinancialDashboardGranularity, string> =
   {
     [FinancialDashboardGranularity.Auto]: "Automática",
-    [FinancialDashboardGranularity.Day]: "Día",
-    [FinancialDashboardGranularity.Week]: "Semana",
-    [FinancialDashboardGranularity.Month]: "Mes",
-    [FinancialDashboardGranularity.Year]: "Año",
+    [FinancialDashboardGranularity.Day]: "Diaria",
+    [FinancialDashboardGranularity.Week]: "Semanal",
+    [FinancialDashboardGranularity.Month]: "Mensual",
+    [FinancialDashboardGranularity.Year]: "Anual",
   }
+
+export const GRANULARITY_OPTIONS = Object.entries(GRANULARITY_LABELS).map(
+  ([value, label]) => ({ value, label }),
+)
 
 export const CLASSNAMES = {
   labelClassName: "grid gap-[5px]",
