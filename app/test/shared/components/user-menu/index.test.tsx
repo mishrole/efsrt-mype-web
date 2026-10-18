@@ -21,7 +21,9 @@ describe("UserMenu", () => {
     const onClose = vi.fn()
     render(<UserMenu {...defaultProps} open onClose={onClose} />)
 
-    expect(screen.getByText("Los próximos módulos aparecerán aquí.")).toBeInTheDocument()
+    expect(
+      screen.getByText("Los próximos módulos aparecerán aquí."),
+    ).toBeInTheDocument()
 
     fireEvent.keyDown(document, { key: "Enter" })
     expect(onClose).not.toHaveBeenCalled()
@@ -45,7 +47,12 @@ describe("UserMenu", () => {
         onLogout={onLogout}
         shortcuts={[
           { id: "sales", label: "Ventas", onSelect },
-          { id: "disabled", label: "Deshabilitado", onSelect: vi.fn(), disabled: true },
+          {
+            id: "disabled",
+            label: "Deshabilitado",
+            onSelect: vi.fn(),
+            disabled: true,
+          },
         ]}
       />,
     )
