@@ -62,6 +62,10 @@ export function useProducts(): UseProductsResult {
   const [isChangingStatus, setIsChangingStatus] = useState(false)
   const [error, setError] = useState("")
 
+  function cancel(): void {
+    void navigate(APP_PATHS.DASHBOARD)
+  }
+
   const fetchProducts = useCallback(
     async (signal?: AbortSignal): Promise<void> => {
       if (!accessToken || !businessId) {
@@ -235,5 +239,6 @@ export function useProducts(): UseProductsResult {
     requestStatusChange,
     cancelStatusChange,
     confirmStatusChange,
+    cancel,
   }
 }

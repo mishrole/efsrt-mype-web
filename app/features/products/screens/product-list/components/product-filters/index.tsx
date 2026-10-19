@@ -1,5 +1,5 @@
-import type { ChangeEvent, FormEvent } from "react"
 import { SearchIcon, XIcon } from "lucide-react"
+import type { ChangeEvent, FormEvent } from "react"
 import { PRODUCT_STATUS_FILTERS } from "~/features/products/constants"
 import { Button } from "~/shared/components/ui/button"
 import { Input } from "~/shared/components/ui/input"
@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "~/shared/components/ui/select"
 import type { ProductFiltersProps, ProductFilterValues } from "./interfaces"
+import { getProductCategoryLabel, getStatusLabel } from "./utils"
 
 export function ProductFilters({
   productCategories,
@@ -24,9 +25,7 @@ export function ProductFilters({
     onChange({ ...values, search: event.target.value })
   }
 
-  function handleProductCategoryChange(
-    productCategoryId: string | null,
-  ): void {
+  function handleProductCategoryChange(productCategoryId: string | null): void {
     if (productCategoryId !== null) {
       onChange({ ...values, productCategoryId })
     }
@@ -80,7 +79,12 @@ export function ProductFilters({
           disabled={disabled}
         >
           <SelectTrigger className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[180px]">
-            <SelectValue />
+            <SelectValue>
+              {getProductCategoryLabel(
+                values.productCategoryId,
+                productCategories,
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent align="start" alignItemWithTrigger={false}>
             <SelectItem value="all">Todas</SelectItem>
@@ -103,7 +107,7 @@ export function ProductFilters({
           disabled={disabled}
         >
           <SelectTrigger className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]">
-            <SelectValue />
+            <SelectValue>{getStatusLabel(values.status)}</SelectValue>
           </SelectTrigger>
           <SelectContent align="start" alignItemWithTrigger={false}>
             <SelectItem value={PRODUCT_STATUS_FILTERS.all}>Todos</SelectItem>

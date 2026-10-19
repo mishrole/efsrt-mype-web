@@ -19,7 +19,7 @@ export default function ProductCategoryListScreen() {
           <div>
             <Button
               variant="ghost"
-              className="mb-3 px-0 hover:bg-transparent"
+              className="mb-3 px-0 hover:bg-transparent cursor-pointer"
               onClick={productCategoriesState.cancel}
             >
               <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />

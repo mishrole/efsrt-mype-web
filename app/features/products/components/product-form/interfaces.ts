@@ -16,3 +16,8 @@ export interface ProductFormProps {
   onSubmit: (values: ProductFormValues) => Promise<void>
   onCancel: () => void
 }
+
+export interface ProductCategoryComboboxItem {
+  label: string
+  value: string
+}

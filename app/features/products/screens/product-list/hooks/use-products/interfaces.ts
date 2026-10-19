@@ -22,4 +22,5 @@ export interface UseProductsResult {
   requestStatusChange: (product: ProductListItemResponse) => void
   cancelStatusChange: () => void
   confirmStatusChange: () => Promise<void>
+  cancel: () => void
 }

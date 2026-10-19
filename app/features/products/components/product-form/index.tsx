@@ -1,23 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
 import { Button } from "~/shared/components/ui/button"
-import { Input } from "~/shared/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/shared/components/ui/select"
-import type { ProductFormProps, ProductFormValues } from "./interfaces"
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "~/shared/components/ui/combobox"
+import { Input } from "~/shared/components/ui/input"
+import { INITIAL_VALUES } from "./constants"
+import type {
+  ProductCategoryComboboxItem,
+  ProductFormProps,
+  ProductFormValues,
+} from "./interfaces"
 import { productFormSchema } from "./schema"
-
-const INITIAL_VALUES: ProductFormValues = {
-  name: "",
-  productCategoryId: "",
-  salePrice: 0,
-  unitCost: 0,
-}
 
 export function ProductForm({
   productCategories,
@@ -39,19 +38,25 @@ export function ProductForm({
     defaultValues: defaultValues ?? INITIAL_VALUES,
   })
 
+  const productCategoryItems: ProductCategoryComboboxItem[] =
+    productCategories.map((productCategory) => ({
+      label: productCategory.name,
+      value: productCategory.id,
+    }))
   const selectedProductCategoryId = useWatch({
     control,
     name: "productCategoryId",
   })
+  const selectedProductCategory =
+    productCategoryItems.find(
+      (productCategoryItem) =>
+        productCategoryItem.value === selectedProductCategoryId,
+    ) ?? null
 
   function handleProductCategoryChange(
-    productCategoryId: string | null,
+    productCategoryItem: ProductCategoryComboboxItem | null,
   ): void {
-    if (productCategoryId === null) {
-      return
-    }
-
-    setValue("productCategoryId", productCategoryId, {
+    setValue("productCategoryId", productCategoryItem?.value ?? "", {
       shouldDirty: true,
       shouldValidate: true,
     })
@@ -69,6 +74,7 @@ export function ProductForm({
           maxLength={160}
           disabled={isSubmitting || isReadOnly}
           aria-invalid={Boolean(errors.name)}
+          className="h-10 rounded-xl border-[#d9e0ec] bg-white"
           {...register("name")}
         />
         <span className="min-h-5 text-sm text-[#b3263e]">
@@ -80,22 +86,34 @@ export function ProductForm({
         <span className="text-sm font-bold text-[#27324a]">
           Categoría de producto
         </span>
-        <Select
-          value={selectedProductCategoryId}
+        <Combobox
+          items={productCategoryItems}
+          value={selectedProductCategory}
           onValueChange={handleProductCategoryChange}
           disabled={isSubmitting || isReadOnly}
         >
-          <SelectTrigger className="min-h-12 rounded-xl border-[#cfd6e4] bg-white">
-            <SelectValue placeholder="Selecciona una categoría" />
-          </SelectTrigger>
-          <SelectContent>
-            {productCategories.map((productCategory) => (
-              <SelectItem key={productCategory.id} value={productCategory.id}>
-                {productCategory.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <ComboboxInput
+            className="min-h-12 w-full rounded-xl border-[#cfd6e4] bg-white"
+            placeholder="Selecciona o busca una categoría"
+            aria-label="Categoría de producto"
+            disabled={isSubmitting || isReadOnly}
+            showTrigger={!isReadOnly}
+            showClear={!isReadOnly}
+          />
+          <ComboboxContent>
+            <ComboboxEmpty>No se encontraron categorías.</ComboboxEmpty>
+            <ComboboxList>
+              {(productCategoryItem: ProductCategoryComboboxItem) => (
+                <ComboboxItem
+                  key={productCategoryItem.value}
+                  value={productCategoryItem}
+                >
+                  {productCategoryItem.label}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
         <span className="min-h-5 text-sm text-[#b3263e]">
           {errors.productCategoryId?.message}
         </span>
@@ -112,6 +130,7 @@ export function ProductForm({
             step="0.01"
             disabled={isSubmitting || isReadOnly}
             aria-invalid={Boolean(errors.salePrice)}
+            className="h-10 rounded-xl border-[#d9e0ec] bg-white"
             {...register("salePrice", { valueAsNumber: true })}
           />
           <span className="min-h-5 text-sm text-[#b3263e]">
@@ -129,6 +148,7 @@ export function ProductForm({
             step="0.01"
             disabled={isSubmitting || isReadOnly}
             aria-invalid={Boolean(errors.unitCost)}
+            className="h-10 rounded-xl border-[#d9e0ec] bg-white"
             {...register("unitCost", { valueAsNumber: true })}
           />
           <span className="min-h-5 text-sm text-[#b3263e]">

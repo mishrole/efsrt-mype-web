@@ -50,6 +50,7 @@ const defaultState: UseProductsResult = {
   requestStatusChange: vi.fn(),
   cancelStatusChange: vi.fn(),
   confirmStatusChange: vi.fn(),
+  cancel: vi.fn(),
 }
 
 describe("ProductListScreen", () => {

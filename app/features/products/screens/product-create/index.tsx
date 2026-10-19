@@ -16,10 +16,10 @@ export default function ProductCreateScreen() {
         <header className="flex flex-col items-start">
           <Button
             variant="ghost"
-            className="mb-3 px-0 hover:bg-transparent"
+            className="mb-3 px-0 hover:bg-transparent cursor-pointer"
             onClick={productCreateState.returnToProducts}
           >
-            <ArrowLeftIcon data-icon="inline-start" aria-hidden="true" />
+            <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />
             Volver a productos
           </Button>
           <span className="text-xs font-extrabold tracking-[0.1em] text-[#2b5fce] uppercase">
@@ -48,8 +48,7 @@ export default function ProductCreateScreen() {
           </p>
         ) : null}
 
-        {!productCreateState.isLoading &&
-        productCreateState.canSubmit ? (
+        {!productCreateState.isLoading && productCreateState.canSubmit ? (
           <ProductForm
             productCategories={productCreateState.productCategories}
             isSubmitting={productCreateState.isSubmitting}

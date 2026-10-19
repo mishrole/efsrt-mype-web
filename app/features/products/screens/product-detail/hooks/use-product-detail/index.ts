@@ -35,6 +35,23 @@ function scopesMatch(
   )
 }
 
+function createCurrentProductCategory(
+  product: ProductDetailResponse,
+): ProductCategoryResponse {
+  return {
+    id: product.productCategoryId,
+    businessId: product.businessId,
+    name: product.productCategoryName,
+    color: product.productCategoryColor,
+    isDefault: false,
+    isActive: product.isActive,
+    deactivatedAt: null,
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+    version: product.version,
+  }
+}
+
 function includeCurrentProductCategory(
   activeProductCategories: ProductCategoryResponse[],
   product: ProductDetailResponse,
@@ -47,21 +64,7 @@ function includeCurrentProductCategory(
     return activeProductCategories
   }
 
-  return [
-    {
-      id: product.productCategoryId,
-      businessId: product.businessId,
-      name: product.productCategoryName,
-      color: product.productCategoryColor,
-      isDefault: false,
-      isActive: false,
-      deactivatedAt: null,
-      createdAt: "",
-      updatedAt: "",
-      version: 0,
-    },
-    ...activeProductCategories,
-  ]
+  return [createCurrentProductCategory(product), ...activeProductCategories]
 }
 
 export function useProductDetail(): UseProductDetailResult {
@@ -127,6 +130,7 @@ export function useProductDetail(): UseProductDetailResult {
             scope,
             product: productResponse,
           })
+          setProductCategories([createCurrentProductCategory(productResponse)])
           setError("")
         }
 

@@ -1,4 +1,4 @@
-import { PackagePlusIcon } from "lucide-react"
+import { ArrowLeftIcon, PackagePlusIcon } from "lucide-react"
 import { Button } from "~/shared/components/ui/button"
 import { ProductCard } from "./components/product-card"
 import { ProductFilters } from "./components/product-filters"
@@ -17,7 +17,15 @@ export default function ProductListScreen() {
       <div className="mx-auto grid w-full max-w-[1180px] gap-6">
         <header className="flex flex-col gap-4 min-[641px]:flex-row min-[641px]:items-end min-[641px]:justify-between">
           <div>
-            <span className="text-xs font-extrabold tracking-[0.1em] text-[#2b5fce] uppercase">
+            <Button
+              variant="ghost"
+              className="mb-3 px-0 hover:bg-transparent cursor-pointer"
+              onClick={productsState.cancel}
+            >
+              <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />
+              Volver a dashboard
+            </Button>
+            <span className="block text-xs font-extrabold tracking-[0.1em] text-[#2b5fce] uppercase">
               Catálogo
             </span>
             <h1 className="my-1 text-3xl font-bold tracking-[-0.035em] text-[#15233e]">
@@ -39,9 +47,7 @@ export default function ProductListScreen() {
         <ProductFilters
           productCategories={productsState.productCategories}
           values={productsState.filters}
-          disabled={
-            productsState.isLoading || productsState.isChangingStatus
-          }
+          disabled={productsState.isLoading || productsState.isChangingStatus}
           onChange={productsState.setFilters}
           onApply={productsState.applyFilters}
           onClear={productsState.clearFilters}
