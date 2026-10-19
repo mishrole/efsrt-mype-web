@@ -50,6 +50,10 @@ export function useProducts(): UseProductsResult {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
 
+  function cancel(): void {
+    void navigate(APP_PATHS.DASHBOARD)
+  }
+
   const loadProducts = useCallback(
     async (signal?: AbortSignal): Promise<void> => {
       if (!accessToken || !currentBusinessId) {
@@ -118,11 +122,11 @@ export function useProducts(): UseProductsResult {
   }
 
   function viewProduct(productId: string): void {
-    navigate(APP_PATHS.PRODUCT_DETAIL(productId))
+    void navigate(APP_PATHS.PRODUCT_DETAIL(productId))
   }
 
   function createProduct(): void {
-    navigate(APP_PATHS.PRODUCT_CREATE)
+    void navigate(APP_PATHS.PRODUCT_CREATE)
   }
 
   return {
@@ -139,5 +143,6 @@ export function useProducts(): UseProductsResult {
     clearFilters,
     viewProduct,
     createProduct,
+    cancel,
   }
 }

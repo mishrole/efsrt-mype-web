@@ -1,5 +1,9 @@
+import { PackageIcon, TagIcon } from "lucide-react"
+import { useNavigate } from "react-router"
 import { useBusinessContextStore } from "~/features/business/stores/business-context"
 import { FullScreenLoading } from "~/shared/components/full-screen-loading"
+import type { UserMenuShortcut } from "~/shared/components/user-menu/interfaces"
+import { APP_PATHS } from "~/shared/constants/pages"
 import { useAuthSessionStore } from "../../../auth/stores/session"
 import { DashboardHeader } from "../../components/dashboard-header"
 import { DashboardLayout } from "../../components/dashboard-layout"
@@ -19,6 +23,32 @@ export default function DashboardScreen() {
   const storedPermissions =
     useBusinessContextStore((state) => state.context?.permissions) ?? []
   const dashboardState = useDashboard()
+  const navigate = useNavigate()
+
+  function navigateToProducts(): void {
+    void navigate(APP_PATHS.PRODUCTS)
+  }
+
+  function navigateToProductCategories(): void {
+    void navigate(APP_PATHS.PRODUCT_CATEGORIES)
+  }
+
+  const userMenuShortcuts: UserMenuShortcut[] = [
+    {
+      id: "products",
+      label: "Productos",
+      icon: <PackageIcon aria-hidden="true" />,
+      onSelect: navigateToProducts,
+      disabled: !storedPermissions.includes("PRODUCT_READ"),
+    },
+    {
+      id: "product-categories",
+      label: "Categorías",
+      icon: <TagIcon aria-hidden="true" />,
+      onSelect: navigateToProductCategories,
+      disabled: !storedPermissions.includes("PRODUCT_CATEGORY_READ"),
+    },
+  ]
 
   if (dashboardState.needsOnboarding && accessToken)
     return (
@@ -35,6 +65,7 @@ export default function DashboardScreen() {
       currentBusinessId={dashboardState.currentBusinessId}
       user={user}
       permissions={storedPermissions}
+      shortcuts={userMenuShortcuts}
       onBusinessChange={dashboardState.selectBusiness}
       onLogout={dashboardState.logoutCurrentSession}
     />

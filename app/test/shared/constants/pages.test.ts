@@ -7,6 +7,9 @@ describe("page constants", () => {
       LOGIN: "login",
       REGISTER: "register",
       DASHBOARD: "dashboard",
+      PRODUCT_CATEGORIES: "product-categories",
+      PRODUCT_CATEGORY_CREATE: "product-categories/create",
+      PRODUCT_CATEGORY_DETAIL: "product-categories/:productCategoryId",
       PRODUCTS: "products",
       PRODUCT_CREATE: "products/create",
       PRODUCT_DETAIL: "products/:productId",
@@ -18,6 +21,8 @@ describe("page constants", () => {
     expect(APP_PATHS.LOGIN).toBe("/login")
     expect(APP_PATHS.REGISTER).toBe("/register")
     expect(APP_PATHS.DASHBOARD).toBe("/dashboard")
+    expect(APP_PATHS.PRODUCT_CATEGORIES).toBe("/product-categories")
+    expect(APP_PATHS.PRODUCT_CATEGORY_CREATE).toBe("/product-categories/create")
     expect(APP_PATHS.PRODUCTS).toBe("/products")
     expect(APP_PATHS.PRODUCT_CREATE).toBe("/products/create")
   })

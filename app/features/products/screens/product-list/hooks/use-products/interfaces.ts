@@ -15,4 +15,5 @@ export interface UseProductsResult {
   clearFilters: () => void
   viewProduct: (productId: string) => void
   createProduct: () => void
+  cancel: () => void
 }

@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
+import { MemoryRouter } from "react-router"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useAuthSessionStore } from "~/features/auth/stores/session"
 import DashboardScreen, { meta } from "~/features/dashboard/screens/dashboard"
@@ -76,6 +77,14 @@ function setSession(accessToken: string | null = "access-token"): void {
   })
 }
 
+function renderDashboardScreen() {
+  return render(
+    <MemoryRouter initialEntries={["/dashboard"]}>
+      <DashboardScreen />
+    </MemoryRouter>,
+  )
+}
+
 describe("DashboardScreen", () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -95,7 +104,7 @@ describe("DashboardScreen", () => {
       reloadAfterCreation,
     })
 
-    render(<DashboardScreen />)
+    renderDashboardScreen()
     fireEvent.click(
       screen.getByRole("button", { name: "Create first business" }),
     )
@@ -107,7 +116,7 @@ describe("DashboardScreen", () => {
     setSession(null)
     useDashboardMock.mockReturnValue({ ...defaultState, needsOnboarding: true })
 
-    render(<DashboardScreen />)
+    renderDashboardScreen()
 
     expect(
       screen.queryByRole("button", { name: "Create first business" }),
@@ -124,7 +133,7 @@ describe("DashboardScreen", () => {
       error: "No disponible",
     })
 
-    render(<DashboardScreen />)
+    renderDashboardScreen()
 
     expect(
       screen.getByText("Cargando información financiera..."),
@@ -168,7 +177,7 @@ describe("DashboardScreen", () => {
       },
     })
 
-    render(<DashboardScreen />)
+    renderDashboardScreen()
 
     expect(screen.getByText("Financial summary")).toBeInTheDocument()
     expect(screen.getByText("Cash flow chart")).toBeInTheDocument()
