@@ -116,6 +116,7 @@ describe("useProductDetail", () => {
     updateProductMock.mockResolvedValue({
       ...productDetail,
       ...formValues,
+      deactivatedAt: null,
       version: 5,
     })
   })
