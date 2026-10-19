@@ -4,22 +4,24 @@ import ProductCreateScreen, {
   meta,
 } from "~/features/products/screens/product-create"
 import { useProductCreate } from "~/features/products/screens/product-create/hooks/use-product-create"
-
-const cancel = vi.fn()
-const useProductCreateMock = vi.mocked(useProductCreate)
+import type { UseProductCreateResult } from "~/features/products/screens/product-create/hooks/use-product-create/interfaces"
 
 vi.mock(
   "~/features/products/screens/product-create/hooks/use-product-create",
-  () => ({ useProductCreate: vi.fn() }),
+  () => ({
+    useProductCreate: vi.fn(),
+  }),
 )
 
-const defaultState = {
-  categories: [],
+const useProductCreateMock = vi.mocked(useProductCreate)
+const defaultState: UseProductCreateResult = {
+  productCategories: [],
   isLoading: false,
   isSubmitting: false,
   error: "",
+  canSubmit: false,
   submitProduct: vi.fn(),
-  cancel,
+  returnToProducts: vi.fn(),
 }
 
 describe("ProductCreateScreen", () => {
@@ -28,24 +30,53 @@ describe("ProductCreateScreen", () => {
     useProductCreateMock.mockReturnValue(defaultState)
   })
 
-  it("defines metadata and renders the form", () => {
+  it("returns page metadata", () => {
     expect(meta()).toEqual([{ title: "Nuevo producto | Mype" }])
-    render(<ProductCreateScreen />)
-    expect(
-      screen.getByRole("heading", { name: "Nuevo producto" }),
-    ).toBeInTheDocument()
-    fireEvent.click(screen.getByText("Volver a productos"))
-    expect(cancel).toHaveBeenCalledOnce()
   })
 
   it("renders loading and error states", () => {
     useProductCreateMock.mockReturnValue({
       ...defaultState,
       isLoading: true,
-      error: "Error de categorías",
+      error: "No fue posible cargar las categorías necesarias.",
     })
+
     render(<ProductCreateScreen />)
+
     expect(screen.getByText("Cargando categorías...")).toBeInTheDocument()
-    expect(screen.getByRole("alert")).toHaveTextContent("Error de categorías")
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "No fue posible cargar las categorías necesarias.",
+    )
+  })
+
+  it("renders the form and returns to products", () => {
+    const returnToProducts = vi.fn()
+    useProductCreateMock.mockReturnValue({
+      ...defaultState,
+      canSubmit: true,
+      returnToProducts,
+      productCategories: [
+        {
+          id: "product-category-id",
+          businessId: "business-id",
+          name: "Bebidas",
+          color: "#3F6FC4",
+          isDefault: false,
+          isActive: true,
+          deactivatedAt: null,
+          createdAt: "2026-10-18T05:00:00Z",
+          updatedAt: "2026-10-18T05:00:00Z",
+          version: 1,
+        },
+      ],
+    })
+
+    render(<ProductCreateScreen />)
+
+    expect(
+      screen.getByRole("button", { name: "Crear producto" }),
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Volver a productos" }))
+    expect(returnToProducts).toHaveBeenCalledOnce()
   })
 })

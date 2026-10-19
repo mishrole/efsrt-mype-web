@@ -3,45 +3,53 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import ProductListScreen, {
   meta,
 } from "~/features/products/screens/product-list"
-import { PRODUCT_STATUS_FILTERS } from "~/features/products/constants"
 import { useProducts } from "~/features/products/screens/product-list/hooks/use-products"
-
-const createProduct = vi.fn()
-const viewProduct = vi.fn()
-const useProductsMock = vi.mocked(useProducts)
+import type { UseProductsResult } from "~/features/products/screens/product-list/hooks/use-products/interfaces"
 
 vi.mock("~/features/products/screens/product-list/hooks/use-products", () => ({
   useProducts: vi.fn(),
 }))
 
-const defaultState = {
-  products: [
-    {
-      id: "product-id",
-      businessId: "business-id",
-      categoryId: "category-id",
-      categoryName: "Bebidas",
-      name: "Gaseosa 500 ml",
-      salePrice: 3.5,
-      unitCost: 2.2,
-      isActive: true,
-    },
-  ],
-  categories: [],
-  filters: {
-    search: "",
-    categoryId: "all",
-    status: PRODUCT_STATUS_FILTERS.all,
-  },
+const useProductsMock = vi.mocked(useProducts)
+const activeProduct = {
+  id: "active-product-id",
+  businessId: "business-id",
+  categoryId: "financial-category-id",
+  categoryName: "Productos",
+  productCategoryId: "product-category-id",
+  productCategoryName: "Bebidas",
+  productCategoryColor: "#3F6FC4",
+  name: "Gaseosa",
+  salePrice: 3.5,
+  unitCost: 2.25,
+  isActive: true,
+}
+const inactiveProduct = {
+  ...activeProduct,
+  id: "inactive-product-id",
+  name: "Agua",
+  isActive: false,
+}
+const defaultState: UseProductsResult = {
+  products: [],
+  productCategories: [],
+  filters: { search: "", productCategoryId: "all", status: "all" },
+  pendingStatusProduct: null,
   currencyCode: "PEN",
   canCreate: true,
+  canDeactivate: true,
+  canReactivate: true,
   isLoading: false,
+  isChangingStatus: false,
   error: "",
   setFilters: vi.fn(),
   applyFilters: vi.fn(),
   clearFilters: vi.fn(),
-  viewProduct,
-  createProduct,
+  viewProduct: vi.fn(),
+  createProduct: vi.fn(),
+  requestStatusChange: vi.fn(),
+  cancelStatusChange: vi.fn(),
+  confirmStatusChange: vi.fn(),
 }
 
 describe("ProductListScreen", () => {
@@ -50,50 +58,67 @@ describe("ProductListScreen", () => {
     useProductsMock.mockReturnValue(defaultState)
   })
 
-  it("defines metadata and renders the products", () => {
+  it("returns page metadata", () => {
     expect(meta()).toEqual([{ title: "Productos | Mype" }])
-    render(<ProductListScreen />)
-
-    expect(
-      screen.getByRole("heading", { name: "Productos" }),
-    ).toBeInTheDocument()
-    expect(screen.getByText("Gaseosa 500 ml")).toBeInTheDocument()
-
-    fireEvent.click(screen.getByText("Nuevo producto"))
-    expect(createProduct).toHaveBeenCalledOnce()
   })
 
-  it("renders loading, error and empty states", () => {
+  it("renders empty state and create action", () => {
+    render(<ProductListScreen />)
+    expect(screen.getByText("No se encontraron productos")).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Nuevo producto" }))
+    expect(defaultState.createProduct).toHaveBeenCalledOnce()
+  })
+
+  it("renders loading and error states without the empty state", () => {
     useProductsMock.mockReturnValue({
       ...defaultState,
-      products: [],
-      canCreate: false,
       isLoading: true,
-      error: "",
-    })
-
-    const { rerender } = render(<ProductListScreen />)
-    expect(screen.getByText("Cargando productos...")).toBeInTheDocument()
-    expect(screen.queryByText("Nuevo producto")).not.toBeInTheDocument()
-
-    useProductsMock.mockReturnValue({
-      ...defaultState,
-      products: [],
-      isLoading: false,
       error: "No fue posible cargar los productos.",
     })
-    rerender(<ProductListScreen />)
+    render(<ProductListScreen />)
+    expect(screen.getByText("Cargando productos...")).toBeInTheDocument()
     expect(screen.getByRole("alert")).toHaveTextContent(
       "No fue posible cargar los productos.",
     )
+    expect(
+      screen.queryByText("No se encontraron productos"),
+    ).not.toBeInTheDocument()
+  })
 
+  it("renders active and inactive products using their status permissions", () => {
     useProductsMock.mockReturnValue({
       ...defaultState,
-      products: [],
-      isLoading: false,
-      error: "",
+      products: [activeProduct, inactiveProduct],
     })
-    rerender(<ProductListScreen />)
-    expect(screen.getByText("No se encontraron productos")).toBeInTheDocument()
+    render(<ProductListScreen />)
+    expect(
+      screen.getByRole("region", { name: "Listado de productos" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Desactivar" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Reactivar" }),
+    ).toBeInTheDocument()
+  })
+
+  it("hides create and status actions without permissions", () => {
+    useProductsMock.mockReturnValue({
+      ...defaultState,
+      products: [activeProduct, inactiveProduct],
+      canCreate: false,
+      canDeactivate: false,
+      canReactivate: false,
+    })
+    render(<ProductListScreen />)
+    expect(
+      screen.queryByRole("button", { name: "Nuevo producto" }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: "Desactivar" }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: "Reactivar" }),
+    ).not.toBeInTheDocument()
   })
 })

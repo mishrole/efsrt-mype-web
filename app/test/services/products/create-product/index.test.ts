@@ -10,11 +10,12 @@ vi.mock("~/shared/http/client", () => ({
 const requestMock = vi.mocked(request)
 
 describe("createProduct service", () => {
-  it("posts the product contract and forwards the abort signal", async () => {
+  it("posts categoryId and productCategoryId", async () => {
     const controller = new AbortController()
     const payload = {
       name: "Gaseosa 500 ml",
-      categoryId: "category-id",
+      categoryId: "financial-category-id",
+      productCategoryId: "product-category-id",
       salePrice: 3.5,
       unitCost: 2.2,
     }

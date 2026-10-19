@@ -26,6 +26,10 @@ export default [
     "features/products/screens/product-create/index.tsx",
   ),
   route(
+    APP_PAGES_ROUTES.PRODUCT_DETAIL,
+    "features/products/screens/product-detail/index.tsx",
+  ),
+  route(
     APP_PAGES_ROUTES.PRODUCTS,
     "features/products/screens/product-list/index.tsx",
   ),

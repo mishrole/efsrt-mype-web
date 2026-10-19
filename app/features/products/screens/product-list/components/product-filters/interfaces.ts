@@ -1,14 +1,14 @@
-import type { CategoryListItemResponse } from "~/services/categories/list-categories/interfaces"
 import type { ProductStatusFilter } from "~/features/products/constants"
+import type { ProductCategoryResponse } from "~/services/product-categories/interfaces"
 
 export interface ProductFilterValues {
   search: string
-  categoryId: string
+  productCategoryId: string
   status: ProductStatusFilter
 }
 
 export interface ProductFiltersProps {
-  categories: CategoryListItemResponse[]
+  productCategories: ProductCategoryResponse[]
   values: ProductFilterValues
   disabled?: boolean
   onChange: (values: ProductFilterValues) => void

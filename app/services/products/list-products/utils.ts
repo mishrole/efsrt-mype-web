@@ -14,6 +14,10 @@ export function createProductsQuery(
     query.set("categoryId", filters.categoryId)
   }
 
+  if (filters.productCategoryId) {
+    query.set("productCategoryId", filters.productCategoryId)
+  }
+
   if (filters.isActive !== undefined) {
     query.set("isActive", String(filters.isActive))
   }

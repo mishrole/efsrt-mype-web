@@ -1,11 +1,12 @@
-import type { CategoryListItemResponse } from "~/services/categories/list-categories/interfaces"
-import type { ProductFormValues } from "../../components/product-form/interfaces"
+import type { ProductCategoryResponse } from "~/services/product-categories/interfaces"
+import type { ProductFormValues } from "~/features/products/components/product-form/interfaces"
 
 export interface UseProductCreateResult {
-  categories: CategoryListItemResponse[]
+  productCategories: ProductCategoryResponse[]
   isLoading: boolean
   isSubmitting: boolean
   error: string
+  canSubmit: boolean
   submitProduct: (values: ProductFormValues) => Promise<void>
-  cancel: () => void
+  returnToProducts: () => void
 }

@@ -1,7 +1,8 @@
-import { ArrowLeftIcon, PackagePlusIcon } from "lucide-react"
+import { PackagePlusIcon } from "lucide-react"
 import { Button } from "~/shared/components/ui/button"
 import { ProductCard } from "./components/product-card"
 import { ProductFilters } from "./components/product-filters"
+import { ProductStatusDialog } from "./components/product-status-dialog"
 import { useProducts } from "./hooks/use-products"
 
 export function meta() {
@@ -16,23 +17,15 @@ export default function ProductListScreen() {
       <div className="mx-auto grid w-full max-w-[1180px] gap-6">
         <header className="flex flex-col gap-4 min-[641px]:flex-row min-[641px]:items-end min-[641px]:justify-between">
           <div>
-            <Button
-              variant="ghost"
-              className="mb-3 px-0 hover:bg-transparent"
-              onClick={productsState.cancel}
-            >
-              <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />
-              Volver a dashboard
-            </Button>
-            <span className="block text-xs font-extrabold tracking-[0.1em] text-[#2b5fce] uppercase">
+            <span className="text-xs font-extrabold tracking-[0.1em] text-[#2b5fce] uppercase">
               Catálogo
             </span>
             <h1 className="my-1 text-3xl font-bold tracking-[-0.035em] text-[#15233e]">
               Productos
             </h1>
             <p className="m-0 text-[#667085]">
-              Consulta los productos del negocio, sus precios y su coste
-              unitario referencial.
+              Consulta los productos, sus precios y su coste unitario
+              referencial.
             </p>
           </div>
           {productsState.canCreate ? (
@@ -44,9 +37,11 @@ export default function ProductListScreen() {
         </header>
 
         <ProductFilters
-          categories={productsState.categories}
+          productCategories={productsState.productCategories}
           values={productsState.filters}
-          disabled={productsState.isLoading}
+          disabled={
+            productsState.isLoading || productsState.isChangingStatus
+          }
           onChange={productsState.setFilters}
           onApply={productsState.applyFilters}
           onClear={productsState.clearFilters}
@@ -73,7 +68,7 @@ export default function ProductListScreen() {
           <section className="rounded-2xl border border-dashed border-[#b8c7e5] bg-white p-8 text-center">
             <h2 className="m-0 text-xl">No se encontraron productos</h2>
             <p className="mt-2 mb-0 text-[#667085]">
-              Prueba otros filtros o registra el primer producto del negocio.
+              Prueba otros filtros o crea el primer producto.
             </p>
           </section>
         ) : null}
@@ -85,12 +80,26 @@ export default function ProductListScreen() {
                 key={product.id}
                 product={product}
                 currencyCode={productsState.currencyCode}
+                canChangeStatus={
+                  product.isActive
+                    ? productsState.canDeactivate
+                    : productsState.canReactivate
+                }
+                isChangingStatus={productsState.isChangingStatus}
                 onView={productsState.viewProduct}
+                onRequestStatusChange={productsState.requestStatusChange}
               />
             ))}
           </section>
         ) : null}
       </div>
+
+      <ProductStatusDialog
+        product={productsState.pendingStatusProduct}
+        isSubmitting={productsState.isChangingStatus}
+        onClose={productsState.cancelStatusChange}
+        onConfirm={productsState.confirmStatusChange}
+      />
     </main>
   )
 }

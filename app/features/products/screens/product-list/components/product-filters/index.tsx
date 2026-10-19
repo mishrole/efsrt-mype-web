@@ -13,7 +13,7 @@ import {
 import type { ProductFiltersProps, ProductFilterValues } from "./interfaces"
 
 export function ProductFilters({
-  categories,
+  productCategories,
   values,
   disabled = false,
   onChange,
@@ -24,13 +24,21 @@ export function ProductFilters({
     onChange({ ...values, search: event.target.value })
   }
 
-  function handleCategoryChange(categoryId: string | null): void {
-    if (categoryId !== null) onChange({ ...values, categoryId })
+  function handleProductCategoryChange(
+    productCategoryId: string | null,
+  ): void {
+    if (productCategoryId !== null) {
+      onChange({ ...values, productCategoryId })
+    }
   }
 
   function handleStatusChange(status: string | null): void {
-    if (status !== null)
-      onChange({ ...values, status: status as ProductFilterValues["status"] })
+    if (status !== null) {
+      onChange({
+        ...values,
+        status: status as ProductFilterValues["status"],
+      })
+    }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
@@ -61,34 +69,30 @@ export function ProductFilters({
           />
         </div>
       </label>
+
       <div className="grid gap-1.5">
         <span className="text-xs font-bold text-[#748096] uppercase">
           Categoría
         </span>
         <Select
-          value={values.categoryId}
-          onValueChange={handleCategoryChange}
+          value={values.productCategoryId}
+          onValueChange={handleProductCategoryChange}
           disabled={disabled}
         >
-          <SelectTrigger
-            aria-label="Categoría"
-            className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[180px]"
-          >
-            <SelectValue>
-              {categories.find((category) => category.id === values.categoryId)
-                ?.name ?? "Todas"}
-            </SelectValue>
+          <SelectTrigger className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[180px]">
+            <SelectValue />
           </SelectTrigger>
           <SelectContent align="start" alignItemWithTrigger={false}>
             <SelectItem value="all">Todas</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
+            {productCategories.map((productCategory) => (
+              <SelectItem key={productCategory.id} value={productCategory.id}>
+                {productCategory.name}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+
       <div className="grid gap-1.5">
         <span className="text-xs font-bold text-[#748096] uppercase">
           Estado
@@ -98,17 +102,8 @@ export function ProductFilters({
           onValueChange={handleStatusChange}
           disabled={disabled}
         >
-          <SelectTrigger
-            aria-label="Estado"
-            className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]"
-          >
-            <SelectValue>
-              {values.status === PRODUCT_STATUS_FILTERS.active
-                ? "Activos"
-                : values.status === PRODUCT_STATUS_FILTERS.inactive
-                  ? "Inactivos"
-                  : "Todos"}
-            </SelectValue>
+          <SelectTrigger className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]">
+            <SelectValue />
           </SelectTrigger>
           <SelectContent align="start" alignItemWithTrigger={false}>
             <SelectItem value={PRODUCT_STATUS_FILTERS.all}>Todos</SelectItem>
@@ -121,6 +116,7 @@ export function ProductFilters({
           </SelectContent>
         </Select>
       </div>
+
       <Button type="submit" disabled={disabled}>
         Aplicar
       </Button>

@@ -2,138 +2,168 @@ import { act, renderHook, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { PRODUCT_STATUS_FILTERS } from "~/features/products/constants"
 import { useProducts } from "~/features/products/screens/product-list/hooks/use-products"
-import { CategoryType } from "~/services/categories/interfaces"
-import { listCategories } from "~/services/categories/list-categories"
+import { listProductCategories } from "~/services/product-categories"
+import {
+  deactivateProduct,
+  reactivateProduct,
+} from "~/services/products/change-product-status"
+import { getProductDetail } from "~/services/products/get-product-detail"
 import { listProducts } from "~/services/products/list-products"
 import { APP_PATHS } from "~/shared/constants/pages"
 
 const navigateMock = vi.fn()
 const listProductsMock = vi.mocked(listProducts)
-const listCategoriesMock = vi.mocked(listCategories)
+const listProductCategoriesMock = vi.mocked(listProductCategories)
+const getProductDetailMock = vi.mocked(getProductDetail)
+const deactivateProductMock = vi.mocked(deactivateProduct)
+const reactivateProductMock = vi.mocked(reactivateProduct)
 
-const authState = {
-  accessToken: "access-token" as string | null,
-}
-
+const authState = { accessToken: "access-token" as string | null }
 const businessState = {
   currentBusinessId: "business-id" as string | null,
   context: {
-    businessId: "business-id",
-    displayName: "Negocio",
     currencyCode: "PEN",
-    membershipId: "membership-id",
-    roleId: "role-id",
-    roleCode: "OWNER",
-    permissions: ["PRODUCT_READ", "PRODUCT_CREATE"],
+    permissions: [
+      "PRODUCT_READ",
+      "PRODUCT_CREATE",
+      "PRODUCT_DEACTIVATE",
+      "PRODUCT_REACTIVATE",
+    ],
   },
 }
 
-vi.mock("react-router", () => ({
-  useNavigate: () => navigateMock,
-}))
-
+vi.mock("react-router", () => ({ useNavigate: () => navigateMock }))
 vi.mock("~/features/auth/stores/session", () => ({
   useAuthSessionStore: (selector: (state: typeof authState) => unknown) =>
     selector(authState),
 }))
-
 vi.mock("~/features/business/stores/business-context", () => ({
   useBusinessContextStore: (
     selector: (state: typeof businessState) => unknown,
   ) => selector(businessState),
 }))
-
-vi.mock("~/services/categories/list-categories", () => ({
-  listCategories: vi.fn(),
+vi.mock("~/services/product-categories", () => ({
+  listProductCategories: vi.fn(),
+}))
+vi.mock("~/services/products/list-products", () => ({ listProducts: vi.fn() }))
+vi.mock("~/services/products/get-product-detail", () => ({
+  getProductDetail: vi.fn(),
+}))
+vi.mock("~/services/products/change-product-status", () => ({
+  deactivateProduct: vi.fn(),
+  reactivateProduct: vi.fn(),
 }))
 
-vi.mock("~/services/products/list-products", () => ({
-  listProducts: vi.fn(),
-}))
-
-const products = [
+const activeProduct = {
+  id: "product-id",
+  businessId: "business-id",
+  categoryId: "financial-category-id",
+  categoryName: "Productos",
+  productCategoryId: "product-category-id",
+  productCategoryName: "Bebidas",
+  productCategoryColor: "#3F6FC4",
+  name: "Gaseosa",
+  salePrice: 3.5,
+  unitCost: 2.25,
+  isActive: true,
+}
+const productCategories = [
   {
-    id: "product-id",
-    businessId: "business-id",
-    categoryId: "category-id",
-    categoryName: "Bebidas",
-    name: "Gaseosa 500 ml",
-    salePrice: 3.5,
-    unitCost: 2.2,
-    isActive: true,
-  },
-]
-
-const categories = [
-  {
-    id: "category-id",
+    id: "product-category-id",
     businessId: "business-id",
     name: "Bebidas",
-    type: CategoryType.Sale,
+    color: "#3F6FC4",
     isDefault: false,
     isActive: true,
+    deactivatedAt: null,
+    createdAt: "2026-10-18T05:00:00Z",
+    updatedAt: "2026-10-18T05:00:00Z",
+    version: 1,
   },
 ]
+const productDetail = {
+  ...activeProduct,
+  categoryType: 1,
+  createdAt: "2026-10-18T05:00:00Z",
+  updatedAt: "2026-10-18T05:00:00Z",
+  version: 4,
+}
 
 describe("useProducts", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     authState.accessToken = "access-token"
     businessState.currentBusinessId = "business-id"
-    businessState.context.permissions = ["PRODUCT_READ", "PRODUCT_CREATE"]
-    listProductsMock.mockResolvedValue(products)
-    listCategoriesMock.mockResolvedValue(categories)
+    businessState.context.permissions = [
+      "PRODUCT_READ",
+      "PRODUCT_CREATE",
+      "PRODUCT_DEACTIVATE",
+      "PRODUCT_REACTIVATE",
+    ]
+    listProductsMock.mockResolvedValue([activeProduct])
+    listProductCategoriesMock.mockResolvedValue(productCategories)
+    getProductDetailMock.mockResolvedValue(productDetail)
+    deactivateProductMock.mockResolvedValue({
+      ...productDetail,
+      deactivatedAt: "2026-10-19T00:00:00Z",
+      isActive: false,
+    })
+    reactivateProductMock.mockResolvedValue({
+      ...productDetail,
+      deactivatedAt: null,
+      isActive: true,
+    })
   })
 
-  it("loads products and sale categories for the current business", async () => {
+  it("loads data and exposes permissions", async () => {
     const { result } = renderHook(() => useProducts())
-
     await waitFor(() => expect(result.current.isLoading).toBe(false))
-
-    expect(result.current.products).toEqual(products)
-    expect(result.current.categories).toEqual(categories)
-    expect(result.current.currencyCode).toBe("PEN")
+    expect(result.current.products).toEqual([activeProduct])
+    expect(result.current.productCategories).toEqual(productCategories)
     expect(result.current.canCreate).toBe(true)
-    expect(listProductsMock).toHaveBeenCalledWith(
-      {
-        businessId: "business-id",
-        search: "",
-        categoryId: undefined,
-        isActive: undefined,
-      },
-      "access-token",
-      expect.any(AbortSignal),
-    )
-    expect(listCategoriesMock).toHaveBeenCalledWith(
-      {
-        businessId: "business-id",
-        type: CategoryType.Sale,
-      },
-      "access-token",
-      expect.any(AbortSignal),
-    )
+    expect(result.current.canDeactivate).toBe(true)
+    expect(result.current.canReactivate).toBe(true)
   })
 
-  it("applies and clears product filters", async () => {
+  it("applies active, inactive and all filters", async () => {
     const { result } = renderHook(() => useProducts())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
 
-    act(() => {
+    act(() =>
       result.current.setFilters({
         search: "gaseosa",
-        categoryId: "category-id",
-        status: PRODUCT_STATUS_FILTERS.inactive,
-      })
-    })
-
+        productCategoryId: "product-category-id",
+        status: PRODUCT_STATUS_FILTERS.active,
+      }),
+    )
     act(() => result.current.applyFilters())
-
     await waitFor(() =>
       expect(listProductsMock).toHaveBeenLastCalledWith(
         {
           businessId: "business-id",
           search: "gaseosa",
-          categoryId: "category-id",
+          productCategoryId: "product-category-id",
+          isActive: true,
+        },
+        "access-token",
+        expect.any(AbortSignal),
+      ),
+    )
+
+    act(() =>
+      result.current.setFilters({
+        search: "",
+        productCategoryId: "all",
+        status: PRODUCT_STATUS_FILTERS.inactive,
+      }),
+    )
+    act(() => result.current.applyFilters())
+    await waitFor(() =>
+      expect(listProductsMock).toHaveBeenLastCalledWith(
+        {
+          businessId: "business-id",
+          search: "",
+          productCategoryId: undefined,
           isActive: false,
         },
         "access-token",
@@ -142,21 +172,18 @@ describe("useProducts", () => {
     )
 
     act(() => result.current.clearFilters())
-
     expect(result.current.filters).toEqual({
       search: "",
-      categoryId: "all",
+      productCategoryId: "all",
       status: PRODUCT_STATUS_FILTERS.all,
     })
   })
 
-  it("navigates to product creation and detail", async () => {
+  it("navigates to create and detail", async () => {
     const { result } = renderHook(() => useProducts())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
-
     act(() => result.current.createProduct())
     act(() => result.current.viewProduct("product-id"))
-
     expect(navigateMock).toHaveBeenNthCalledWith(1, APP_PATHS.PRODUCT_CREATE)
     expect(navigateMock).toHaveBeenNthCalledWith(
       2,
@@ -164,27 +191,86 @@ describe("useProducts", () => {
     )
   })
 
-  it("does not request products without authentication or a business", async () => {
-    authState.accessToken = null
-    businessState.currentBusinessId = null
-
+  it("opens, cancels and confirms deactivation", async () => {
     const { result } = renderHook(() => useProducts())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
-
-    expect(result.current.products).toEqual([])
-    expect(listProductsMock).not.toHaveBeenCalled()
-    expect(listCategoriesMock).not.toHaveBeenCalled()
+    act(() => result.current.requestStatusChange(activeProduct))
+    expect(result.current.pendingStatusProduct).toEqual(activeProduct)
+    await act(async () => result.current.confirmStatusChange())
+    expect(getProductDetailMock).toHaveBeenCalledWith(
+      { businessId: "business-id", productId: "product-id" },
+      "access-token",
+    )
+    expect(deactivateProductMock).toHaveBeenCalledWith(
+      { businessId: "business-id", productId: "product-id", version: 4 },
+      "access-token",
+    )
+    expect(result.current.pendingStatusProduct).toBeNull()
   })
 
-  it("exposes the API error and hides creation without permission", async () => {
-    businessState.context.permissions = ["PRODUCT_READ"]
-    listProductsMock.mockRejectedValue(new Error("network"))
-
+  it("confirms reactivation", async () => {
+    const inactiveProduct = { ...activeProduct, isActive: false }
     const { result } = renderHook(() => useProducts())
     await waitFor(() => expect(result.current.isLoading).toBe(false))
+    act(() => result.current.requestStatusChange(inactiveProduct))
+    await act(async () => result.current.confirmStatusChange())
+    expect(reactivateProductMock).toHaveBeenCalledWith(
+      { businessId: "business-id", productId: "product-id", version: 4 },
+      "access-token",
+    )
+  })
 
-    expect(result.current.error).toBe("No fue posible cargar los productos.")
+  it("does not close the dialog while changing status", async () => {
+    let releaseRequest: (() => void) | undefined
+    getProductDetailMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          releaseRequest = () => resolve(productDetail)
+        }),
+    )
+    const { result } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    act(() => result.current.requestStatusChange(activeProduct))
+    let confirmationPromise: Promise<void>
+    act(() => {
+      confirmationPromise = result.current.confirmStatusChange()
+    })
+    await waitFor(() => expect(result.current.isChangingStatus).toBe(true))
+    act(() => result.current.cancelStatusChange())
+    expect(result.current.pendingStatusProduct).toEqual(activeProduct)
+    releaseRequest?.()
+    await act(async () => confirmationPromise!)
+  })
+
+  it("reports loading and status errors", async () => {
+    listProductsMock.mockRejectedValueOnce(new Error("network"))
+    const firstRender = renderHook(() => useProducts())
+    await waitFor(() =>
+      expect(firstRender.result.current.isLoading).toBe(false),
+    )
+    expect(firstRender.result.current.error).toBe(
+      "No fue posible cargar los productos.",
+    )
+
+    listProductsMock.mockResolvedValue([activeProduct])
+    getProductDetailMock.mockRejectedValueOnce(new Error("status"))
+    const secondRender = renderHook(() => useProducts())
+    await waitFor(() =>
+      expect(secondRender.result.current.isLoading).toBe(false),
+    )
+    act(() => secondRender.result.current.requestStatusChange(activeProduct))
+    await act(async () => secondRender.result.current.confirmStatusChange())
+    expect(secondRender.result.current.error).toBe(
+      "No fue posible cambiar el estado del producto.",
+    )
+  })
+
+  it("does not request data without session context", async () => {
+    authState.accessToken = null
+    businessState.currentBusinessId = null
+    const { result } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
     expect(result.current.products).toEqual([])
-    expect(result.current.canCreate).toBe(false)
+    expect(listProductsMock).not.toHaveBeenCalled()
   })
 })

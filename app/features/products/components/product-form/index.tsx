@@ -1,0 +1,157 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm, useWatch } from "react-hook-form"
+import { Button } from "~/shared/components/ui/button"
+import { Input } from "~/shared/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/shared/components/ui/select"
+import type { ProductFormProps, ProductFormValues } from "./interfaces"
+import { productFormSchema } from "./schema"
+
+const INITIAL_VALUES: ProductFormValues = {
+  name: "",
+  productCategoryId: "",
+  salePrice: 0,
+  unitCost: 0,
+}
+
+export function ProductForm({
+  productCategories,
+  defaultValues,
+  isSubmitting,
+  isReadOnly = false,
+  submitLabel,
+  onSubmit,
+  onCancel,
+}: Readonly<ProductFormProps>) {
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ProductFormValues>({
+    resolver: zodResolver(productFormSchema),
+    defaultValues: defaultValues ?? INITIAL_VALUES,
+  })
+
+  const selectedProductCategoryId = useWatch({
+    control,
+    name: "productCategoryId",
+  })
+
+  function handleProductCategoryChange(
+    productCategoryId: string | null,
+  ): void {
+    if (productCategoryId === null) {
+      return
+    }
+
+    setValue("productCategoryId", productCategoryId, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+  }
+
+  return (
+    <form
+      className="grid gap-6 rounded-2xl border border-[#e1e6ef] bg-white p-5 shadow-sm min-[641px]:p-7"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+    >
+      <label className="grid gap-2">
+        <span className="text-sm font-bold text-[#27324a]">Nombre</span>
+        <Input
+          maxLength={160}
+          disabled={isSubmitting || isReadOnly}
+          aria-invalid={Boolean(errors.name)}
+          {...register("name")}
+        />
+        <span className="min-h-5 text-sm text-[#b3263e]">
+          {errors.name?.message}
+        </span>
+      </label>
+
+      <div className="grid gap-2">
+        <span className="text-sm font-bold text-[#27324a]">
+          Categoría de producto
+        </span>
+        <Select
+          value={selectedProductCategoryId}
+          onValueChange={handleProductCategoryChange}
+          disabled={isSubmitting || isReadOnly}
+        >
+          <SelectTrigger className="min-h-12 rounded-xl border-[#cfd6e4] bg-white">
+            <SelectValue placeholder="Selecciona una categoría" />
+          </SelectTrigger>
+          <SelectContent>
+            {productCategories.map((productCategory) => (
+              <SelectItem key={productCategory.id} value={productCategory.id}>
+                {productCategory.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <span className="min-h-5 text-sm text-[#b3263e]">
+          {errors.productCategoryId?.message}
+        </span>
+      </div>
+
+      <div className="grid gap-5 min-[641px]:grid-cols-2">
+        <label className="grid gap-2">
+          <span className="text-sm font-bold text-[#27324a]">
+            Precio de venta
+          </span>
+          <Input
+            type="number"
+            min="0"
+            step="0.01"
+            disabled={isSubmitting || isReadOnly}
+            aria-invalid={Boolean(errors.salePrice)}
+            {...register("salePrice", { valueAsNumber: true })}
+          />
+          <span className="min-h-5 text-sm text-[#b3263e]">
+            {errors.salePrice?.message}
+          </span>
+        </label>
+
+        <label className="grid gap-2">
+          <span className="text-sm font-bold text-[#27324a]">
+            Coste unitario referencial
+          </span>
+          <Input
+            type="number"
+            min="0"
+            step="0.01"
+            disabled={isSubmitting || isReadOnly}
+            aria-invalid={Boolean(errors.unitCost)}
+            {...register("unitCost", { valueAsNumber: true })}
+          />
+          <span className="min-h-5 text-sm text-[#b3263e]">
+            {errors.unitCost?.message}
+          </span>
+        </label>
+      </div>
+
+      <div className="flex flex-col-reverse gap-3 border-t border-[#e5eaf2] pt-5 min-[481px]:flex-row min-[481px]:justify-end">
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={isSubmitting}
+          onClick={onCancel}
+        >
+          Cancelar
+        </Button>
+        {!isReadOnly ? (
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Guardando..." : submitLabel}
+          </Button>
+        ) : null}
+      </div>
+    </form>
+  )
+}

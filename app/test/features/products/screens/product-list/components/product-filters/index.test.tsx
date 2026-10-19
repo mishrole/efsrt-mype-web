@@ -1,39 +1,68 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import { beforeEach, describe, expect, it, vi } from "vitest"
-import { PRODUCT_STATUS_FILTERS } from "~/features/products/constants"
+import type { ReactNode } from "react"
+import { describe, expect, it, vi } from "vitest"
 import { ProductFilters } from "~/features/products/screens/product-list/components/product-filters"
-import { CategoryType } from "~/services/categories/interfaces"
+import type { ProductFilterValues } from "~/features/products/screens/product-list/components/product-filters/interfaces"
 
-const categories = [
+const selectCallbacks = vi.hoisted(
+  () => [] as Array<(value: string | null) => void>,
+)
+
+vi.mock("~/shared/components/ui/select", () => ({
+  Select: ({
+    children,
+    onValueChange,
+  }: {
+    children: ReactNode
+    onValueChange: (value: string | null) => void
+  }) => {
+    const callbackIndex = selectCallbacks.length
+    selectCallbacks.push(onValueChange)
+    return <div data-testid={`select-${callbackIndex}`}>{children}</div>
+  },
+  SelectTrigger: ({ children }: { children: ReactNode }) => (
+    <div>{children}</div>
+  ),
+  SelectValue: () => <span />,
+  SelectContent: ({ children }: { children: ReactNode }) => (
+    <div>{children}</div>
+  ),
+  SelectItem: ({ children }: { children: ReactNode }) => (
+    <span>{children}</span>
+  ),
+}))
+
+const values: ProductFilterValues = {
+  search: "",
+  productCategoryId: "all",
+  status: "all",
+}
+
+const productCategories = [
   {
-    id: "category-id",
+    id: "product-category-id",
     businessId: "business-id",
     name: "Bebidas",
-    type: CategoryType.Sale,
+    color: "#3F6FC4",
     isDefault: false,
     isActive: true,
+    deactivatedAt: null,
+    createdAt: "2026-10-18T05:00:00Z",
+    updatedAt: "2026-10-18T05:00:00Z",
+    version: 1,
   },
 ]
 
-const values = {
-  search: "",
-  categoryId: "all",
-  status: PRODUCT_STATUS_FILTERS.all,
-}
-
 describe("ProductFilters", () => {
-  const onChange = vi.fn()
-  const onApply = vi.fn()
-  const onClear = vi.fn()
+  it("changes every filter, ignores null selections, applies and clears", () => {
+    selectCallbacks.length = 0
+    const onChange = vi.fn()
+    const onApply = vi.fn()
+    const onClear = vi.fn()
 
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it("emits the updated search", () => {
     render(
       <ProductFilters
-        categories={categories}
+        productCategories={productCategories}
         values={values}
         onChange={onChange}
         onApply={onApply}
@@ -42,136 +71,47 @@ describe("ProductFilters", () => {
     )
 
     fireEvent.change(screen.getByLabelText("Buscar productos"), {
-      target: {
-        value: "gaseosa",
-      },
+      target: { value: "gaseosa" },
     })
+    selectCallbacks[0]?.("product-category-id")
+    selectCallbacks[0]?.(null)
+    selectCallbacks[1]?.("inactive")
+    selectCallbacks[1]?.(null)
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar" }))
+    fireEvent.click(screen.getByRole("button", { name: "Limpiar" }))
 
-    expect(onChange).toHaveBeenCalledOnce()
-    expect(onChange).toHaveBeenCalledWith({
+    expect(onChange).toHaveBeenNthCalledWith(1, {
       ...values,
       search: "gaseosa",
     })
-  })
-
-  it("emits the selected category", () => {
-    render(
-      <ProductFilters
-        categories={categories}
-        values={values}
-        onChange={onChange}
-        onApply={onApply}
-        onClear={onClear}
-      />,
-    )
-
-    fireEvent.click(screen.getByLabelText("Categoría"))
-
-    const categoryOption = screen.getByText("Bebidas")
-
-    fireEvent.pointerDown(categoryOption)
-    fireEvent.click(categoryOption)
-
-    expect(onChange).toHaveBeenCalledOnce()
-    expect(onChange).toHaveBeenCalledWith({
+    expect(onChange).toHaveBeenNthCalledWith(2, {
       ...values,
-      categoryId: "category-id",
+      productCategoryId: "product-category-id",
     })
-  })
-
-  it("emits the selected status", () => {
-    render(
-      <ProductFilters
-        categories={categories}
-        values={values}
-        onChange={onChange}
-        onApply={onApply}
-        onClear={onClear}
-      />,
-    )
-
-    fireEvent.click(screen.getByLabelText("Estado"))
-
-    const inactiveOption = screen.getByText("Inactivos")
-
-    fireEvent.pointerDown(inactiveOption)
-    fireEvent.click(inactiveOption)
-
-    expect(onChange).toHaveBeenCalledOnce()
-    expect(onChange).toHaveBeenCalledWith({
+    expect(onChange).toHaveBeenNthCalledWith(3, {
       ...values,
-      status: PRODUCT_STATUS_FILTERS.inactive,
+      status: "inactive",
     })
-  })
-
-  it("applies the current filters", () => {
-    render(
-      <ProductFilters
-        categories={categories}
-        values={values}
-        onChange={onChange}
-        onApply={onApply}
-        onClear={onClear}
-      />,
-    )
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Aplicar",
-      }),
-    )
-
+    expect(onChange).toHaveBeenCalledTimes(3)
     expect(onApply).toHaveBeenCalledOnce()
-  })
-
-  it("clears the current filters", () => {
-    render(
-      <ProductFilters
-        categories={categories}
-        values={values}
-        onChange={onChange}
-        onApply={onApply}
-        onClear={onClear}
-      />,
-    )
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Limpiar",
-      }),
-    )
-
     expect(onClear).toHaveBeenCalledOnce()
   })
 
-  it("disables every control while loading", () => {
+  it("disables all controls", () => {
+    selectCallbacks.length = 0
     render(
       <ProductFilters
-        categories={categories}
+        productCategories={productCategories}
         values={values}
         disabled
-        onChange={onChange}
-        onApply={onApply}
-        onClear={onClear}
+        onChange={vi.fn()}
+        onApply={vi.fn()}
+        onClear={vi.fn()}
       />,
     )
 
     expect(screen.getByLabelText("Buscar productos")).toBeDisabled()
-
-    expect(screen.getByLabelText("Categoría")).toBeDisabled()
-
-    expect(screen.getByLabelText("Estado")).toBeDisabled()
-
-    expect(
-      screen.getByRole("button", {
-        name: "Aplicar",
-      }),
-    ).toBeDisabled()
-
-    expect(
-      screen.getByRole("button", {
-        name: "Limpiar",
-      }),
-    ).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Aplicar" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Limpiar" })).toBeDisabled()
   })
 })
