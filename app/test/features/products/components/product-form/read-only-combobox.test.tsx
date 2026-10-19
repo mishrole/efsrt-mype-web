@@ -24,10 +24,16 @@ vi.mock("~/shared/components/ui/combobox", () => ({
       data-show-clear={String(showClear)}
     />
   ),
-  ComboboxContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  ComboboxEmpty: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  ComboboxContent: ({ children }: { children: ReactNode }) => (
+    <div>{children}</div>
+  ),
+  ComboboxEmpty: ({ children }: { children: ReactNode }) => (
+    <div>{children}</div>
+  ),
   ComboboxList: () => null,
-  ComboboxItem: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  ComboboxItem: ({ children }: { children: ReactNode }) => (
+    <div>{children}</div>
+  ),
 }))
 
 const productCategories: ProductCategoryResponse[] = [

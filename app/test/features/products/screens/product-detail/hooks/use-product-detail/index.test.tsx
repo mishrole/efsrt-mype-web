@@ -215,7 +215,9 @@ describe("useProductDetail", () => {
     listProductCategoriesMock.mockRejectedValueOnce(new Error("network"))
     const secondRender = renderHook(() => useProductDetail())
 
-    await waitFor(() => expect(secondRender.result.current.isLoading).toBe(false))
+    await waitFor(() =>
+      expect(secondRender.result.current.isLoading).toBe(false),
+    )
     await waitFor(() =>
       expect(secondRender.result.current.categoriesError).toBe(
         "El producto se cargó, pero no fue posible consultar las categorías disponibles.",
@@ -227,9 +229,7 @@ describe("useProductDetail", () => {
     const apiException = {
       message: "Producto no encontrado",
     }
-    isApiErrorMock.mockImplementation(
-      (exception) => exception === apiException,
-    )
+    isApiErrorMock.mockImplementation((exception) => exception === apiException)
     getProductDetailMock.mockRejectedValueOnce(apiException)
     const { result } = renderHook(() => useProductDetail())
 
@@ -295,16 +295,13 @@ describe("useProductDetail", () => {
     rejectUpdate?.(new Error("network"))
     await act(async () => firstSubmission!)
 
-    expect(result.current.error).toBe(
-      "No fue posible actualizar el producto.",
-    )
+    expect(result.current.error).toBe("No fue posible actualizar el producto.")
     expect(result.current.isSubmitting).toBe(false)
   })
 
   it("does not submit before categories finish loading", async () => {
     let resolveCategories:
-      | ((categories: typeof activeProductCategory[]) => void)
-      | undefined
+      ((categories: (typeof activeProductCategory)[]) => void) | undefined
     listProductCategoriesMock.mockImplementation(
       () =>
         new Promise((resolve) => {
@@ -347,9 +344,7 @@ describe("useProductDetail", () => {
   })
 
   it("ignores resolved product data after unmount aborts the request", async () => {
-    let resolveProduct:
-      | ((product: typeof productDetail) => void)
-      | undefined
+    let resolveProduct: ((product: typeof productDetail) => void) | undefined
     getProductDetailMock.mockImplementation(
       () =>
         new Promise((resolve) => {

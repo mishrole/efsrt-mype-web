@@ -36,9 +36,7 @@ function findProductsFinancialCategory(
 export function useProductCreate(): UseProductCreateResult {
   const navigate = useNavigate()
   const accessToken = useAuthSessionStore((state) => state.accessToken)
-  const businessId = useBusinessContextStore(
-    (state) => state.currentBusinessId,
-  )
+  const businessId = useBusinessContextStore((state) => state.currentBusinessId)
   const [productCategories, setProductCategories] = useState<
     ProductCategoryResponse[]
   >([])
@@ -122,12 +120,7 @@ export function useProductCreate(): UseProductCreateResult {
   }, [loadCreationDependencies])
 
   async function submitProduct(values: ProductFormValues): Promise<void> {
-    if (
-      !accessToken ||
-      !businessId ||
-      !financialCategory ||
-      isSubmitting
-    ) {
+    if (!accessToken || !businessId || !financialCategory || isSubmitting) {
       return
     }
 
@@ -145,9 +138,7 @@ export function useProductCreate(): UseProductCreateResult {
       )
       void navigate(APP_PATHS.PRODUCTS)
     } catch (exception) {
-      setError(
-        getErrorMessage(exception, "No fue posible crear el producto."),
-      )
+      setError(getErrorMessage(exception, "No fue posible crear el producto."))
     } finally {
       setIsSubmitting(false)
     }
@@ -162,8 +153,7 @@ export function useProductCreate(): UseProductCreateResult {
     isLoading,
     isSubmitting,
     error,
-    canSubmit:
-      financialCategory !== null && productCategories.length > 0,
+    canSubmit: financialCategory !== null && productCategories.length > 0,
     submitProduct,
     returnToProducts,
   }

@@ -64,6 +64,8 @@ describe("ProductCard", () => {
         onRequestStatusChange={onRequestStatusChange}
       />,
     )
-    expect(screen.getByRole("button", { name: "Reactivar" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Reactivar" }),
+    ).toBeInTheDocument()
   })
 })
