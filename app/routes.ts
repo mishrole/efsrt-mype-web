@@ -9,4 +9,28 @@ export default [
     APP_PAGES_ROUTES.DASHBOARD,
     "features/dashboard/screens/dashboard/index.tsx",
   ),
+  route(
+    APP_PAGES_ROUTES.PRODUCT_CATEGORY_CREATE,
+    "features/product-categories/screens/product-category-create/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.PRODUCT_CATEGORY_DETAIL,
+    "features/product-categories/screens/product-category-detail/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.PRODUCT_CATEGORIES,
+    "features/product-categories/screens/product-category-list/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.PRODUCT_CREATE,
+    "features/products/screens/product-create/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.PRODUCT_DETAIL,
+    "features/products/screens/product-detail/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.PRODUCTS,
+    "features/products/screens/product-list/index.tsx",
+  ),
 ] satisfies RouteConfig
