@@ -12,6 +12,7 @@ vi.mock(
 )
 const useProductDetailMock = vi.mocked(useProductDetail)
 const submitProduct = vi.fn().mockResolvedValue(undefined)
+const returnToProducts = vi.fn()
 const productCategory = {
   id: "product-category-id",
   businessId: "business-id",
@@ -51,7 +52,7 @@ const defaultState: UseProductDetailResult = {
   categoriesError: "",
   submitProduct,
   reloadProduct: vi.fn(),
-  returnToProducts: vi.fn(),
+  returnToProducts,
 }
 
 describe("ProductDetailScreen", () => {
@@ -133,5 +134,36 @@ describe("ProductDetailScreen", () => {
     expect(
       screen.getByRole("button", { name: "Editar producto" }),
     ).toBeInTheDocument()
+  })
+
+  it("renders the fallback description without a product", () => {
+    useProductDetailMock.mockReturnValue({ ...defaultState, product: null })
+
+    render(<ProductDetailScreen />)
+
+    expect(
+      screen.getByText("Consulta la información de este producto."),
+    ).toBeInTheDocument()
+  })
+
+  it("renders the product error", () => {
+    useProductDetailMock.mockReturnValue({
+      ...defaultState,
+      error: "No fue posible cargar el producto.",
+    })
+
+    render(<ProductDetailScreen />)
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "No fue posible cargar el producto.",
+    )
+  })
+
+  it("returns to products from read-only cancel", () => {
+    render(<ProductDetailScreen />)
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }))
+
+    expect(returnToProducts).toHaveBeenCalledOnce()
   })
 })

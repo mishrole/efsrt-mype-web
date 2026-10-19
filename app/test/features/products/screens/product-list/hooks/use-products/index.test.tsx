@@ -10,6 +10,7 @@ import {
 import { getProductDetail } from "~/services/products/get-product-detail"
 import { listProducts } from "~/services/products/list-products"
 import { APP_PATHS } from "~/shared/constants/pages"
+import { createApiError } from "~/shared/http/errors"
 
 const navigateMock = vi.fn()
 const listProductsMock = vi.mocked(listProducts)
@@ -18,9 +19,17 @@ const getProductDetailMock = vi.mocked(getProductDetail)
 const deactivateProductMock = vi.mocked(deactivateProduct)
 const reactivateProductMock = vi.mocked(reactivateProduct)
 
+interface BusinessContextTestState {
+  currentBusinessId: string | null
+  context: {
+    currencyCode: string
+    permissions: string[]
+  } | null
+}
+
 const authState = { accessToken: "access-token" as string | null }
-const businessState = {
-  currentBusinessId: "business-id" as string | null,
+const businessState: BusinessContextTestState = {
+  currentBusinessId: "business-id",
   context: {
     currencyCode: "PEN",
     permissions: [
@@ -94,12 +103,15 @@ describe("useProducts", () => {
     vi.clearAllMocks()
     authState.accessToken = "access-token"
     businessState.currentBusinessId = "business-id"
-    businessState.context.permissions = [
-      "PRODUCT_READ",
-      "PRODUCT_CREATE",
-      "PRODUCT_DEACTIVATE",
-      "PRODUCT_REACTIVATE",
-    ]
+    businessState.context = {
+      currencyCode: "PEN",
+      permissions: [
+        "PRODUCT_READ",
+        "PRODUCT_CREATE",
+        "PRODUCT_DEACTIVATE",
+        "PRODUCT_REACTIVATE",
+      ],
+    }
     listProductsMock.mockResolvedValue([activeProduct])
     listProductCategoriesMock.mockResolvedValue(productCategories)
     getProductDetailMock.mockResolvedValue(productDetail)
@@ -272,5 +284,106 @@ describe("useProducts", () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false))
     expect(result.current.products).toEqual([])
     expect(listProductsMock).not.toHaveBeenCalled()
+  })
+
+  it("navigates back to the dashboard", async () => {
+    const { result } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    act(() => result.current.cancel())
+
+    expect(navigateMock).toHaveBeenCalledWith(APP_PATHS.DASHBOARD)
+  })
+
+  it("uses API messages for loading and status errors", async () => {
+    listProductsMock.mockRejectedValueOnce(
+      createApiError(400, { message: "Error al listar" }),
+    )
+    const firstRender = renderHook(() => useProducts())
+    await waitFor(() =>
+      expect(firstRender.result.current.isLoading).toBe(false),
+    )
+    expect(firstRender.result.current.error).toBe("Error al listar")
+    firstRender.unmount()
+
+    listProductsMock.mockResolvedValue([activeProduct])
+    getProductDetailMock.mockRejectedValueOnce(
+      createApiError(409, { message: "Versión desactualizada" }),
+    )
+    const secondRender = renderHook(() => useProducts())
+    await waitFor(() =>
+      expect(secondRender.result.current.isLoading).toBe(false),
+    )
+    act(() => secondRender.result.current.requestStatusChange(activeProduct))
+    await act(async () => secondRender.result.current.confirmStatusChange())
+    expect(secondRender.result.current.error).toBe("Versión desactualizada")
+  })
+
+  it("exposes fallback currency and denied permissions without context", async () => {
+    businessState.context = null
+
+    const { result } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    expect(result.current.currencyCode).toBe("PEN")
+    expect(result.current.canCreate).toBe(false)
+    expect(result.current.canDeactivate).toBe(false)
+    expect(result.current.canReactivate).toBe(false)
+  })
+
+  it("cancels a pending status change when idle", async () => {
+    const { result } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    act(() => result.current.requestStatusChange(activeProduct))
+
+    act(() => result.current.cancelStatusChange())
+
+    expect(result.current.pendingStatusProduct).toBeNull()
+  })
+
+  it("returns early when status confirmation has no pending product", async () => {
+    const { result } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    await act(async () => result.current.confirmStatusChange())
+
+    expect(getProductDetailMock).not.toHaveBeenCalled()
+  })
+
+  it("returns early when authentication disappears before confirmation", async () => {
+    const { result, rerender } = renderHook(() => useProducts())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    act(() => {
+      result.current.requestStatusChange(activeProduct)
+    })
+
+    act(() => {
+      authState.accessToken = null
+      rerender()
+    })
+
+    await act(async () => {
+      await result.current.confirmStatusChange()
+    })
+
+    expect(getProductDetailMock).not.toHaveBeenCalled()
+  })
+
+  it("ignores successful loading results after the request is aborted", async () => {
+    let resolveProducts: ((value: (typeof activeProduct)[]) => void) | undefined
+    listProductsMock.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveProducts = resolve
+        }),
+    )
+    const { unmount } = renderHook(() => useProducts())
+
+    unmount()
+    resolveProducts?.([activeProduct])
+    await Promise.resolve()
+
+    expect(deactivateProductMock).not.toHaveBeenCalled()
   })
 })
