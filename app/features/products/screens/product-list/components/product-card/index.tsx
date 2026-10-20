@@ -1,8 +1,8 @@
 import { ChevronRightIcon, PowerIcon, RotateCcwIcon } from "lucide-react"
 import { Badge } from "~/shared/components/ui/badge"
 import { Button } from "~/shared/components/ui/button"
+import { formatMoney } from "~/shared/utils/money"
 import type { ProductCardProps } from "./interfaces"
-import { formatMoney } from "./utils"
 
 export function ProductCard({
   product,

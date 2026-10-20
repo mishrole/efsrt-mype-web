@@ -17,6 +17,10 @@ export const API_ROUTES = {
   PRODUCTS: (businessId: string) => `/api/v1/businesses/${businessId}/products`,
   PRODUCT_DETAIL: (businessId: string, productId: string) =>
     `/api/v1/businesses/${businessId}/products/${productId}`,
+  FINANCIAL_MOVEMENTS: (businessId: string) =>
+    `/api/v1/businesses/${businessId}/financial-movements`,
+  FINANCIAL_MOVEMENT_DETAIL: (businessId: string, movementId: string) =>
+    `/api/v1/businesses/${businessId}/financial-movements/${movementId}`,
   FINANCIAL_DASHBOARD: (businessId: string) =>
     `/api/v1/businesses/${businessId}/dashboard`,
 } as const

@@ -22,6 +22,18 @@ export default [
     "features/product-categories/screens/product-category-list/index.tsx",
   ),
   route(
+    APP_PAGES_ROUTES.FINANCIAL_MOVEMENT_CREATE,
+    "features/financial-movements/screens/movement-draft-create/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.FINANCIAL_MOVEMENT_DETAIL,
+    "features/financial-movements/screens/movement-draft-detail/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.FINANCIAL_MOVEMENTS,
+    "features/financial-movements/screens/movement-draft-list/index.tsx",
+  ),
+  route(
     APP_PAGES_ROUTES.PRODUCT_CREATE,
     "features/products/screens/product-create/index.tsx",
   ),
