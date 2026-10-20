@@ -57,6 +57,7 @@ describe("financial movement screens", () => {
       submitMovement: vi.fn(),
       returnToMovements: vi.fn(),
       reloadMovement: vi.fn(),
+      applyMovementSummary: vi.fn(),
     })
     vi.mocked(useMovementDrafts).mockReturnValue({
       movements: [movement],

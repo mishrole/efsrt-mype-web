@@ -10,4 +10,5 @@ export interface UseMovementDraftDetailResult {
   submitMovement: (values: FinancialMovementFormValues) => Promise<void>
   returnToMovements: () => void
   reloadMovement: () => Promise<void>
+  applyMovementSummary: (movementTotal: number, movementVersion: number) => void
 }

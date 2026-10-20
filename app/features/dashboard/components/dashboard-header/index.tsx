@@ -1,13 +1,10 @@
 import { useState } from "react"
+import { useNavigate } from "react-router"
 import { UserMenu } from "~/shared/components/user-menu"
+import { APP_PATHS } from "~/shared/constants/pages"
 import { BusinessSelect } from "../business-select"
-import { CreateMovementPlaceholder } from "../create-movement-placeholder"
 import { NewMenu } from "../new-menu"
-import {
-  DASHBOARD_PERMISSIONS,
-  NEW_ITEM_TYPES,
-  type NewItemType,
-} from "./constants"
+import { DASHBOARD_PERMISSIONS } from "./constants"
 import type { DashboardHeaderProps } from "./interfaces"
 
 export function DashboardHeader({
@@ -19,8 +16,8 @@ export function DashboardHeader({
   onBusinessChange,
   onLogout,
 }: Readonly<DashboardHeaderProps>) {
+  const navigate = useNavigate()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [newItemType, setNewItemType] = useState<NewItemType | null>(null)
   const displayName = user?.displayName ?? "Usuario"
   const canCreateMovement = permissions.includes(
     DASHBOARD_PERMISSIONS.movementCreate,
@@ -29,12 +26,16 @@ export function DashboardHeader({
     DASHBOARD_PERMISSIONS.productCreate,
   )
 
-  function openCreation(itemType: NewItemType): void {
-    setNewItemType(itemType)
+  function createSale(): void {
+    void navigate(APP_PATHS.FINANCIAL_MOVEMENT_CREATE("sale"))
   }
 
-  function closeCreation(): void {
-    setNewItemType(null)
+  function createExpense(): void {
+    void navigate(APP_PATHS.FINANCIAL_MOVEMENT_CREATE("expense"))
+  }
+
+  function createProduct(): void {
+    void navigate(APP_PATHS.PRODUCT_CREATE)
   }
 
   function handleUserMenuOpenChange(open: boolean): void {
@@ -71,9 +72,9 @@ export function DashboardHeader({
           <NewMenu
             canCreateMovement={canCreateMovement}
             canCreateProduct={canCreateProduct}
-            onCreateSale={() => openCreation(NEW_ITEM_TYPES.sale)}
-            onCreateExpense={() => openCreation(NEW_ITEM_TYPES.expense)}
-            onCreateProduct={() => openCreation(NEW_ITEM_TYPES.product)}
+            onCreateSale={createSale}
+            onCreateExpense={createExpense}
+            onCreateProduct={createProduct}
           />
           <UserMenu
             displayName={displayName}
@@ -85,11 +86,6 @@ export function DashboardHeader({
           />
         </div>
       </div>
-      <CreateMovementPlaceholder
-        open={newItemType !== null}
-        itemType={newItemType}
-        onClose={closeCreation}
-      />
     </header>
   )
 }
