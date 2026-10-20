@@ -1,6 +1,9 @@
-import { PackageIcon, TagIcon } from "lucide-react"
+import { DollarSignIcon, PackageIcon, TagIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 import { useBusinessContextStore } from "~/features/business/stores/business-context"
+import { FINANCIAL_MOVEMENT_PERMISSIONS } from "~/features/financial-movements/constants"
+import { PRODUCT_CATEGORY_PERMISSIONS } from "~/features/product-categories/constants"
+import { PRODUCT_PERMISSIONS } from "~/features/products/constants"
 import { FullScreenLoading } from "~/shared/components/full-screen-loading"
 import type { UserMenuShortcut } from "~/shared/components/user-menu/interfaces"
 import { APP_PATHS } from "~/shared/constants/pages"
@@ -33,20 +36,33 @@ export default function DashboardScreen() {
     void navigate(APP_PATHS.PRODUCT_CATEGORIES)
   }
 
+  function navigateToFinancialMovements(): void {
+    void navigate(APP_PATHS.FINANCIAL_MOVEMENTS)
+  }
+
   const userMenuShortcuts: UserMenuShortcut[] = [
     {
       id: "products",
       label: "Productos",
       icon: <PackageIcon aria-hidden="true" />,
       onSelect: navigateToProducts,
-      disabled: !storedPermissions.includes("PRODUCT_READ"),
+      disabled: !storedPermissions.includes(PRODUCT_PERMISSIONS.read),
     },
     {
       id: "product-categories",
       label: "Categorías",
       icon: <TagIcon aria-hidden="true" />,
       onSelect: navigateToProductCategories,
-      disabled: !storedPermissions.includes("PRODUCT_CATEGORY_READ"),
+      disabled: !storedPermissions.includes(PRODUCT_CATEGORY_PERMISSIONS.read),
+    },
+    {
+      id: "financial-movements",
+      label: "Movimientos",
+      icon: <DollarSignIcon aria-hidden="true" />,
+      onSelect: navigateToFinancialMovements,
+      disabled: !storedPermissions.includes(
+        FINANCIAL_MOVEMENT_PERMISSIONS.read,
+      ),
     },
   ]
 
