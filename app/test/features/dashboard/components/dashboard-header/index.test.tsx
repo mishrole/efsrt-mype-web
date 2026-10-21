@@ -1,6 +1,20 @@
 import { fireEvent, render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { DashboardHeader } from "~/features/dashboard/components/dashboard-header"
+import { APP_PATHS } from "~/shared/constants/pages"
+
+const routerMocks = vi.hoisted(() => ({
+  navigate: vi.fn(),
+}))
+
+vi.mock("react-router", async (importOriginal) => {
+  const reactRouter = await importOriginal<typeof import("react-router")>()
+
+  return {
+    ...reactRouter,
+    useNavigate: () => routerMocks.navigate,
+  }
+})
 
 const BUSINESSES = [
   {
@@ -30,6 +44,23 @@ const USER = {
 
 const CREATION_PERMISSIONS = ["MOVEMENT_CREATE", "PRODUCT_CREATE"]
 
+function renderDashboardHeader(
+  permissions: string[] = CREATION_PERMISSIONS,
+  overrides: Partial<React.ComponentProps<typeof DashboardHeader>> = {},
+): void {
+  render(
+    <DashboardHeader
+      businesses={BUSINESSES}
+      currentBusinessId="business-1"
+      permissions={permissions}
+      user={USER}
+      onBusinessChange={vi.fn()}
+      onLogout={vi.fn().mockResolvedValue(undefined)}
+      {...overrides}
+    />,
+  )
+}
+
 function selectBusiness(businessName: string): void {
   fireEvent.click(screen.getByLabelText("Negocio"))
 
@@ -52,28 +83,15 @@ function selectNewOption(optionName: string): void {
   fireEvent.click(option)
 }
 
-function closeOpenDialog(): void {
-  fireEvent.click(
-    screen.getByRole("button", {
-      name: "Cerrar",
-    }),
-  )
-}
-
 describe("DashboardHeader", () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it("renders the selected business and changes to another business", () => {
     const onBusinessChange = vi.fn()
 
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={CREATION_PERMISSIONS}
-        user={USER}
-        onBusinessChange={onBusinessChange}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+    renderDashboardHeader(CREATION_PERMISSIONS, { onBusinessChange })
 
     expect(screen.getByLabelText("Negocio")).toHaveTextContent("Negocio uno")
 
@@ -83,158 +101,59 @@ describe("DashboardHeader", () => {
     expect(onBusinessChange).toHaveBeenCalledWith("business-2")
   })
 
-  it("opens the sale placeholder from the New menu and closes it", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={CREATION_PERMISSIONS}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+  it("navigates to sale creation from the New menu", () => {
+    renderDashboardHeader()
 
     selectNewOption("Registrar venta")
 
-    expect(
-      screen.getByRole("dialog", {
-        name: "Registrar venta",
-      }),
-    ).toBeInTheDocument()
-
-    expect(
-      screen.getByText("Aquí se registrará una nueva venta."),
-    ).toBeInTheDocument()
-
-    closeOpenDialog()
-
-    expect(
-      screen.queryByRole("dialog", {
-        name: "Registrar venta",
-      }),
-    ).not.toBeInTheDocument()
+    expect(routerMocks.navigate).toHaveBeenCalledOnce()
+    expect(routerMocks.navigate).toHaveBeenCalledWith(
+      APP_PATHS.FINANCIAL_MOVEMENT_CREATE("sale"),
+    )
   })
 
-  it("opens the expense placeholder from the New menu and closes it", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={CREATION_PERMISSIONS}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+  it("navigates to expense creation from the New menu", () => {
+    renderDashboardHeader()
 
     selectNewOption("Registrar gasto")
 
-    expect(
-      screen.getByRole("dialog", {
-        name: "Registrar gasto",
-      }),
-    ).toBeInTheDocument()
-
-    expect(
-      screen.getByText("Aquí se registrará un nuevo gasto."),
-    ).toBeInTheDocument()
-
-    closeOpenDialog()
-
-    expect(
-      screen.queryByRole("dialog", {
-        name: "Registrar gasto",
-      }),
-    ).not.toBeInTheDocument()
+    expect(routerMocks.navigate).toHaveBeenCalledOnce()
+    expect(routerMocks.navigate).toHaveBeenCalledWith(
+      APP_PATHS.FINANCIAL_MOVEMENT_CREATE("expense"),
+    )
   })
 
-  it("opens the product placeholder from the New menu and closes it", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={CREATION_PERMISSIONS}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+  it("navigates to product creation from the New menu", () => {
+    renderDashboardHeader()
 
     selectNewOption("Crear producto")
 
-    expect(
-      screen.getByRole("dialog", {
-        name: "Crear producto",
-      }),
-    ).toBeInTheDocument()
-
-    expect(
-      screen.getByText("Aquí se registrará un nuevo producto."),
-    ).toBeInTheDocument()
-
-    closeOpenDialog()
-
-    expect(
-      screen.queryByRole("dialog", {
-        name: "Crear producto",
-      }),
-    ).not.toBeInTheDocument()
+    expect(routerMocks.navigate).toHaveBeenCalledOnce()
+    expect(routerMocks.navigate).toHaveBeenCalledWith(APP_PATHS.PRODUCT_CREATE)
   })
 
   it("shows only movement actions with MOVEMENT_CREATE", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={["MOVEMENT_CREATE"]}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+    renderDashboardHeader(["MOVEMENT_CREATE"])
 
     openNewMenu()
 
     expect(screen.getByText("Registrar venta")).toBeInTheDocument()
-
     expect(screen.getByText("Registrar gasto")).toBeInTheDocument()
-
     expect(screen.queryByText("Crear producto")).not.toBeInTheDocument()
   })
 
   it("shows only product creation with PRODUCT_CREATE", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={["PRODUCT_CREATE"]}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+    renderDashboardHeader(["PRODUCT_CREATE"])
 
     openNewMenu()
 
     expect(screen.getByText("Crear producto")).toBeInTheDocument()
-
     expect(screen.queryByText("Registrar venta")).not.toBeInTheDocument()
-
     expect(screen.queryByText("Registrar gasto")).not.toBeInTheDocument()
   })
 
   it("does not render the New menu without creation permissions", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={[]}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+    renderDashboardHeader([])
 
     expect(screen.queryByLabelText("Crear nuevo")).not.toBeInTheDocument()
   })
@@ -242,21 +161,11 @@ describe("DashboardHeader", () => {
   it("renders the authenticated user and closes the session", () => {
     const onLogout = vi.fn().mockResolvedValue(undefined)
 
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={CREATION_PERMISSIONS}
-        user={USER}
-        onBusinessChange={vi.fn()}
-        onLogout={onLogout}
-      />,
-    )
+    renderDashboardHeader(CREATION_PERMISSIONS, { onLogout })
 
     fireEvent.click(screen.getByLabelText("Abrir menú de usuario"))
 
     expect(screen.getByText("Mitchell Rodríguez")).toBeInTheDocument()
-
     expect(screen.getByText("mitchell@example.com")).toBeInTheDocument()
 
     const logoutOption = screen.getByText("Cerrar sesión")
@@ -268,16 +177,7 @@ describe("DashboardHeader", () => {
   })
 
   it("uses the fallback user when the session user is unavailable", () => {
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={[]}
-        user={null}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+    renderDashboardHeader([], { user: null })
 
     expect(screen.getByLabelText("Abrir menú de usuario")).toHaveTextContent(
       "U",
@@ -291,23 +191,15 @@ describe("DashboardHeader", () => {
   it("renders the supplied user-menu shortcuts", () => {
     const onSelect = vi.fn()
 
-    render(
-      <DashboardHeader
-        businesses={BUSINESSES}
-        currentBusinessId="business-1"
-        permissions={[]}
-        user={USER}
-        shortcuts={[
-          {
-            id: "products",
-            label: "Productos",
-            onSelect,
-          },
-        ]}
-        onBusinessChange={vi.fn()}
-        onLogout={vi.fn().mockResolvedValue(undefined)}
-      />,
-    )
+    renderDashboardHeader([], {
+      shortcuts: [
+        {
+          id: "products",
+          label: "Productos",
+          onSelect,
+        },
+      ],
+    })
 
     fireEvent.click(screen.getByLabelText("Abrir menú de usuario"))
 

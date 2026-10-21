@@ -4,6 +4,7 @@ import { FinancialMovementForm } from "~/features/financial-movements/components
 import { FINANCIAL_MOVEMENT_TYPES } from "~/features/financial-movements/constants"
 import { Button } from "~/shared/components/ui/button"
 import { formatMoney } from "~/shared/utils/money"
+import { MovementItemsPanel } from "./components/movement-items-panel"
 import { useMovementDraftDetail } from "./hooks/use-movement-draft-detail"
 
 export function meta() {
@@ -140,6 +141,15 @@ export default function MovementDraftDetailScreen() {
                   ? cancelEditing
                   : movementDetailState.returnToMovements
               }
+            />
+
+            <MovementItemsPanel
+              businessId={movementDetailState.movement.businessId}
+              movementId={movementDetailState.movement.id}
+              movementType={movementDetailState.movement.type}
+              movementVersion={movementDetailState.movement.version}
+              currencyCode={movementDetailState.movement.currencyCode}
+              onMovementChanged={movementDetailState.applyMovementSummary}
             />
           </>
         ) : null}

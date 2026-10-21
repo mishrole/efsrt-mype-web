@@ -115,6 +115,23 @@ export function useMovementDraftDetail(): UseMovementDraftDetailResult {
     void navigate(APP_PATHS.FINANCIAL_MOVEMENTS)
   }
 
+  function applyMovementSummary(
+    movementTotal: number,
+    movementVersion: number,
+  ): void {
+    setMovement((currentMovement) => {
+      if (!currentMovement) {
+        return null
+      }
+
+      return {
+        ...currentMovement,
+        totalAmount: movementTotal,
+        version: movementVersion,
+      }
+    })
+  }
+
   return {
     movement,
     canUpdate:
@@ -126,5 +143,6 @@ export function useMovementDraftDetail(): UseMovementDraftDetailResult {
     submitMovement,
     returnToMovements,
     reloadMovement,
+    applyMovementSummary,
   }
 }
