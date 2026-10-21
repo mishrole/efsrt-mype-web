@@ -47,29 +47,33 @@ export function FinancialMovementForm({
 
   return (
     <form
+      data-testid="financial-movement-form"
       className="grid gap-6 rounded-2xl border border-[#e1e6ef] bg-white p-5 shadow-sm min-[641px]:p-7"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
     >
-      <div className="grid gap-2">
-        <span className="text-sm font-bold text-[#27324a]">Tipo</span>
-        <div className="min-h-12 rounded-xl border border-[#d9e0ec] bg-[#f7f9fc] px-3 py-3 text-sm font-semibold text-[#46536b]">
-          {movementTypeLabel}
+      <div className="grid gap-6 min-[721px]:grid-cols-2">
+        <div className="grid gap-2">
+          <span className="text-sm font-bold text-[#27324a]">Tipo</span>
+          <div className="min-h-12 rounded-xl border border-[#d9e0ec] bg-[#f7f9fc] px-3 py-3 text-sm font-semibold text-[#46536b]">
+            {movementTypeLabel}
+          </div>
         </div>
-      </div>
 
-      <label className="grid gap-2">
-        <span className="text-sm font-bold text-[#27324a]">Fecha</span>
-        <Input
-          type="date"
-          disabled={isSubmitting || isReadOnly}
-          aria-invalid={Boolean(errors.movementDate)}
-          {...register("movementDate")}
-        />
-        <span className="min-h-5 text-sm text-[#b3263e]">
-          {errors.movementDate?.message}
-        </span>
-      </label>
+        <label className="grid gap-2">
+          <span className="text-sm font-bold text-[#27324a]">Fecha</span>
+          <Input
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
+            type="date"
+            disabled={isSubmitting || isReadOnly}
+            aria-invalid={Boolean(errors.movementDate)}
+            {...register("movementDate")}
+          />
+          <span className="text-sm text-destructive">
+            {errors.movementDate?.message}
+          </span>
+        </label>
+      </div>
 
       <label className="grid gap-2">
         <span className="text-sm font-bold text-[#27324a]">
@@ -78,6 +82,7 @@ export function FinancialMovementForm({
         <Textarea
           maxLength={FINANCIAL_MOVEMENT_DESCRIPTION_MAX_LENGTH}
           rows={4}
+          className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
           disabled={isSubmitting || isReadOnly}
           aria-invalid={Boolean(errors.description)}
           {...register("description")}
@@ -87,21 +92,21 @@ export function FinancialMovementForm({
         </span>
       </label>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-[#e5eaf2] pt-5 min-[481px]:flex-row min-[481px]:justify-end">
-        <Button
-          type="button"
-          variant="ghost"
-          disabled={isSubmitting}
-          onClick={onCancel}
-        >
-          {isReadOnly ? "Volver" : "Cancelar"}
-        </Button>
-        {!isReadOnly ? (
+      {!isReadOnly ? (
+        <div className="flex flex-col-reverse gap-3 border-t border-[#e5eaf2] pt-5 min-[481px]:flex-row min-[481px]:justify-end">
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={isSubmitting}
+            onClick={onCancel}
+          >
+            Cancelar
+          </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Guardando..." : submitLabel}
           </Button>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </form>
   )
 }

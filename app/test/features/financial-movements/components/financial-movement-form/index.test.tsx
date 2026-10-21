@@ -64,7 +64,9 @@ describe("FinancialMovementForm", () => {
     expect(
       screen.queryByRole("button", { name: "Guardar" }),
     ).not.toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Volver" })).toBeInTheDocument()
+    expect(
+      screen.queryByRole("button", { name: "Volver" }),
+    ).not.toBeInTheDocument()
     rerender(
       <FinancialMovementForm
         type={FINANCIAL_MOVEMENT_TYPES.sale}

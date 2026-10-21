@@ -50,14 +50,22 @@ describe("financial movement screens", () => {
     })
     vi.mocked(useMovementDraftDetail).mockReturnValue({
       movement,
+      itemVersions: [],
       canUpdate: true,
+      canConfirm: false,
       isLoading: false,
       isSubmitting: false,
+      isConfirming: false,
+      isConfirmDialogOpen: false,
       error: "",
       submitMovement: vi.fn(),
       returnToMovements: vi.fn(),
       reloadMovement: vi.fn(),
       applyMovementSummary: vi.fn(),
+      applyMovementItems: vi.fn(),
+      openConfirmDialog: vi.fn(),
+      closeConfirmDialog: vi.fn(),
+      confirmMovement: vi.fn(),
     })
     vi.mocked(useMovementDrafts).mockReturnValue({
       movements: [movement],

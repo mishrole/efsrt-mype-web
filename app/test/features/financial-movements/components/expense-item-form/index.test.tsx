@@ -38,9 +38,10 @@ describe("ExpenseItemForm", () => {
         onCancel={vi.fn()}
       />,
     )
-    fireEvent.change(screen.getByLabelText("Categoría de gasto"), {
-      target: { value: "category" },
-    })
+    fireEvent.click(
+      screen.getByRole("combobox", { name: "Categoría de gasto" }),
+    )
+    fireEvent.click(await screen.findByRole("option", { name: "Movilidad" }))
     fireEvent.change(screen.getByLabelText("Descripción"), {
       target: { value: "Taxi" },
     })

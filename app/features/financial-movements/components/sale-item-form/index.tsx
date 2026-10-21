@@ -1,8 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { ItemFormActions } from "~/features/financial-movements/components/item-form-actions"
 import { ItemFormNumberFields } from "~/features/financial-movements/components/item-form-number-fields"
 import { Input } from "~/shared/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/shared/components/ui/select"
 import type { SaleItemFormProps } from "./interfaces"
 import { saleItemFormSchema, type SaleItemFormValues } from "./schema"
 
@@ -14,6 +21,7 @@ export function SaleItemForm({
   onCancel,
 }: Readonly<SaleItemFormProps>) {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -28,25 +36,60 @@ export function SaleItemForm({
   return (
     <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)} noValidate>
       <label className="grid gap-2">
-        <span>Producto</span>
-        <select
-          className="h-10 rounded-md border px-3"
-          disabled={isSubmitting}
-          {...register("productId")}
-        >
-          {products.map((product) => (
-            <option key={product.id} value={product.id}>
-              {product.name}
-            </option>
-          ))}
-        </select>
-        <span className="text-sm text-destructive">
-          {errors.productId?.message}
+        <span className="text-[0.9rem] font-[750] text-[#27324a]">
+          Producto
         </span>
+
+        <Controller
+          name="productId"
+          control={control}
+          render={({ field }) => {
+            const selectedProductName = products.find(
+              (product) => product.id === field.value,
+            )?.name
+
+            return (
+              <Select
+                value={field.value}
+                disabled={isSubmitting}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger
+                  className={[
+                    "min-h-[3.25rem] w-full rounded-[0.875rem] border-[#cfd6e4] bg-white px-4 text-base text-[#172033]",
+                    "focus-visible:border-[#3569e8] focus-visible:ring-[#3569e8]/12",
+                    "aria-invalid:border-[#c73c54] aria-invalid:ring-[#c73c54]/12",
+                  ].join(" ")}
+                  aria-invalid={Boolean(errors.productId)}
+                  onBlur={field.onBlur}
+                >
+                  <SelectValue>
+                    {selectedProductName ?? "Selecciona un producto"}
+                  </SelectValue>
+                </SelectTrigger>
+
+                <SelectContent align="start" alignItemWithTrigger={false}>
+                  {products.map((product) => (
+                    <SelectItem key={product.id} value={product.id}>
+                      {product.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )
+          }}
+        />
+
+        {errors.productId?.message ? (
+          <p className="m-0 text-[0.78rem] leading-6 text-[#b3263e]">
+            {errors.productId.message}
+          </p>
+        ) : null}
       </label>
       <ItemFormNumberFields
         quantityInput={
           <Input
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
             type="number"
             step="0.01"
             disabled={isSubmitting}
@@ -56,6 +99,7 @@ export function SaleItemForm({
         quantityError={errors.quantity?.message}
         unitAmountInput={
           <Input
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
             type="number"
             step="0.01"
             disabled={isSubmitting}

@@ -56,7 +56,7 @@ export function ProductCategoryFilters({
           />
           <Input
             aria-label="Buscar categorías de producto"
-            className="h-10 rounded-xl border-[#d9e0ec] bg-white pl-9"
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
             value={values.search}
             onChange={handleSearchChange}
             disabled={disabled}
@@ -74,7 +74,7 @@ export function ProductCategoryFilters({
         >
           <SelectTrigger
             aria-label="Estado"
-            className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]"
+            className="min-h-12 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]"
           >
             <SelectValue>
               {values.status === PRODUCT_CATEGORY_STATUS_FILTERS.active

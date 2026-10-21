@@ -2,6 +2,7 @@ export const FINANCIAL_MOVEMENT_PERMISSIONS = {
   read: "MOVEMENT_READ",
   create: "MOVEMENT_CREATE",
   update: "MOVEMENT_UPDATE",
+  confirm: "MOVEMENT_CONFIRM",
 } as const
 
 export const FINANCIAL_MOVEMENT_TYPES = {

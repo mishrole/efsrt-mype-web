@@ -52,6 +52,7 @@ export function ProductCategoryForm({
         <span className="text-sm font-bold text-[#27324a]">Nombre</span>
         <Input
           maxLength={120}
+          className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
           aria-invalid={Boolean(errors.name)}
           {...register("name")}
         />
