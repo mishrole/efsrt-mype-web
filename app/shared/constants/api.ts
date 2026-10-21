@@ -21,6 +21,8 @@ export const API_ROUTES = {
     `/api/v1/businesses/${businessId}/financial-movements`,
   FINANCIAL_MOVEMENT_DETAIL: (businessId: string, movementId: string) =>
     `/api/v1/businesses/${businessId}/financial-movements/${movementId}`,
+  FINANCIAL_MOVEMENT_CONFIRM: (businessId: string, movementId: string) =>
+    `/api/v1/businesses/${businessId}/financial-movements/${movementId}/confirm`,
   FINANCIAL_MOVEMENT_ITEMS: (businessId: string, movementId: string) =>
     `/api/v1/businesses/${businessId}/financial-movements/${movementId}/items`,
   SALE_ITEMS: (businessId: string, movementId: string) =>

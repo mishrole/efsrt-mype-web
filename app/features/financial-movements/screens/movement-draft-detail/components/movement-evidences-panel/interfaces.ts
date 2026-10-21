@@ -3,4 +3,5 @@ export interface MovementEvidencesPanelProps {
   movementId: string
   movementVersion: number
   onMovementChanged: () => Promise<void>
+  showHeading?: boolean
 }

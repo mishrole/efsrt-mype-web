@@ -18,6 +18,7 @@ export function MovementEvidencesPanel({
   movementId,
   movementVersion,
   onMovementChanged,
+  showHeading = true,
 }: Readonly<MovementEvidencesPanelProps>) {
   const accessToken = useAuthSessionStore((state) => state.accessToken)
   const [evidences, setEvidences] = useState<MovementEvidenceResponse[]>([])
@@ -189,14 +190,16 @@ export function MovementEvidencesPanel({
   }
 
   return (
-    <section className="grid gap-4 rounded-2xl border bg-white p-5">
+    <section className="grid gap-4">
       <header className="flex flex-col gap-3 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
-        <div>
-          <h2 className="m-0 text-xl font-bold">Evidencias</h2>
-          <p className="m-0 text-sm text-muted-foreground">
-            Archivos activos asociados al movimiento
-          </p>
-        </div>
+        {showHeading ? (
+          <div>
+            <h2 className="m-0 text-xl font-bold">Evidencias</h2>
+            <p className="m-0 text-sm text-muted-foreground">
+              Archivos activos asociados al movimiento
+            </p>
+          </div>
+        ) : null}
         <Button type="button" onClick={openAttachModal}>
           <PaperclipIcon aria-hidden="true" />
           Adjuntar evidencia

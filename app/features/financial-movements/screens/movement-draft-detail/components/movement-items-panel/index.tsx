@@ -1,5 +1,5 @@
 import { PlusIcon } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useAuthSessionStore } from "~/features/auth/stores/session"
 import { FinancialMovementItemCard } from "~/features/financial-movements/components/financial-movement-item-card"
 import { FinancialMovementItemModal } from "~/features/financial-movements/components/financial-movement-item-modal"
@@ -26,6 +26,8 @@ export function MovementItemsPanel({
   movementVersion,
   currencyCode,
   onMovementChanged,
+  onItemsChanged,
+  showHeading = true,
 }: Readonly<MovementItemsPanelProps>) {
   const accessToken = useAuthSessionStore((state) => state.accessToken)
   const [items, setItems] = useState<FinancialMovementItemResponse[]>([])
@@ -36,24 +38,41 @@ export function MovementItemsPanel({
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isBusy, setIsBusy] = useState(false)
   const [error, setError] = useState("")
+
+  const itemVersions = useMemo(
+    () =>
+      items.map((item) => ({
+        itemId: item.id,
+        version: item.version,
+      })),
+    [items],
+  )
+
   const isSale = movementType === FINANCIAL_MOVEMENT_TYPES.sale
+
+  useEffect(() => {
+    onItemsChanged(itemVersions)
+  }, [itemVersions, onItemsChanged])
 
   const loadItems = useCallback(
     async (signal?: AbortSignal): Promise<void> => {
       if (!accessToken) {
         return
       }
+
       const response = await listFinancialMovementItems(
         businessId,
         movementId,
         accessToken,
         signal,
       )
+
       if (!signal?.aborted) {
         setItems(response.items)
+
         onMovementChanged(
           response.items.reduce(
-            (total, item) => total + item.subtotalAmount,
+            (movementTotal, item) => movementTotal + item.subtotalAmount,
             0,
           ),
           response.movementVersion,
@@ -62,8 +81,10 @@ export function MovementItemsPanel({
     },
     [accessToken, businessId, movementId, onMovementChanged],
   )
+
   useEffect(() => {
     const controller = new AbortController()
+
     async function initializeItems(): Promise<void> {
       try {
         await loadItems(controller.signal)
@@ -77,7 +98,9 @@ export function MovementItemsPanel({
         }
       }
     }
+
     void initializeItems()
+
     return () => controller.abort()
   }, [loadItems])
 
@@ -85,47 +108,65 @@ export function MovementItemsPanel({
     if (!accessToken) {
       return
     }
+
     setSelectedItem(null)
     setError("")
+
     if (isSale) {
       setProducts(
         await listProducts(
-          { businessId, isActive: true, availableForSale: true },
+          {
+            businessId,
+            isActive: true,
+            availableForSale: true,
+          },
           accessToken,
         ),
       )
     } else {
       setCategories(
         await listCategories(
-          { businessId, type: 2, isActive: true },
+          {
+            businessId,
+            type: 2,
+            isActive: true,
+          },
           accessToken,
         ),
       )
     }
+
     setIsModalOpen(true)
   }
+
   function openEditModal(item: FinancialMovementItemResponse): void {
     setSelectedItem(item)
     setIsModalOpen(true)
   }
+
   function closeModal(): void {
     if (!isBusy) {
       setIsModalOpen(false)
       setSelectedItem(null)
     }
   }
+
   function upsertItem(item: FinancialMovementItemResponse): void {
     setItems((currentItems) => {
-      const exists = currentItems.some(
+      const itemExists = currentItems.some(
         (currentItem) => currentItem.id === item.id,
       )
-      return exists
-        ? currentItems.map((currentItem) =>
-            currentItem.id === item.id ? item : currentItem,
-          )
-        : [...currentItems, item]
+
+      if (itemExists) {
+        return currentItems.map((currentItem) =>
+          currentItem.id === item.id ? item : currentItem,
+        )
+      }
+
+      return [...currentItems, item]
     })
   }
+
   async function submitSale(values: {
     productId: string
     quantity: number
@@ -134,31 +175,41 @@ export function MovementItemsPanel({
     if (!accessToken || isBusy) {
       return
     }
+
     setIsBusy(true)
+
     try {
       const response = selectedItem
         ? await updateSaleItem(
             businessId,
             movementId,
             selectedItem.id,
-            { ...values, movementVersion, itemVersion: selectedItem.version },
+            {
+              ...values,
+              movementVersion,
+              itemVersion: selectedItem.version,
+            },
             accessToken,
           )
         : await addSaleItem(
             businessId,
             movementId,
-            { ...values, movementVersion },
+            {
+              ...values,
+              movementVersion,
+            },
             accessToken,
           )
+
       upsertItem(response.item)
       onMovementChanged(response.movementTotal, response.movementVersion)
-      closeModal()
     } finally {
       setIsBusy(false)
       setIsModalOpen(false)
       setSelectedItem(null)
     }
   }
+
   async function submitExpense(values: {
     categoryId: string
     description: string
@@ -168,22 +219,29 @@ export function MovementItemsPanel({
     if (!accessToken || isBusy) {
       return
     }
+
     setIsBusy(true)
+
     try {
       const payload = {
         ...values,
         description: values.description.trim(),
         movementVersion,
       }
+
       const response = selectedItem
         ? await updateExpenseItem(
             businessId,
             movementId,
             selectedItem.id,
-            { ...payload, itemVersion: selectedItem.version },
+            {
+              ...payload,
+              itemVersion: selectedItem.version,
+            },
             accessToken,
           )
         : await addExpenseItem(businessId, movementId, payload, accessToken)
+
       upsertItem(response.item)
       onMovementChanged(response.movementTotal, response.movementVersion)
     } finally {
@@ -192,26 +250,34 @@ export function MovementItemsPanel({
       setSelectedItem(null)
     }
   }
+
   async function retireItem(
     item: FinancialMovementItemResponse,
   ): Promise<void> {
     if (!accessToken || isBusy) {
       return
     }
+
     setIsBusy(true)
+
     try {
       const response = await retireFinancialMovementItem(
         businessId,
         movementId,
         item.id,
-        { movementVersion, itemVersion: item.version },
+        {
+          movementVersion,
+          itemVersion: item.version,
+        },
         accessToken,
       )
+
       setItems((currentItems) =>
         currentItems.filter(
           (currentItem) => currentItem.id !== response.itemId,
         ),
       )
+
       onMovementChanged(response.movementTotal, response.movementVersion)
     } finally {
       setIsBusy(false)
@@ -219,22 +285,30 @@ export function MovementItemsPanel({
   }
 
   return (
-    <section className="grid gap-4 rounded-2xl border bg-white p-5">
+    <section className="grid gap-4">
       <header className="flex items-center justify-between gap-4">
-        <div>
-          <h2 className="m-0 text-xl font-bold">
-            {isSale ? "Productos" : "Conceptos"}
-          </h2>
-          <p className="m-0 text-sm text-muted-foreground">
-            Ítems activos del borrador
-          </p>
-        </div>
+        {showHeading ? (
+          <div>
+            <h2 className="m-0 text-xl font-bold">
+              {isSale ? "Productos" : "Conceptos"}
+            </h2>
+
+            <p className="m-0 text-sm text-muted-foreground">
+              Ítems activos del borrador
+            </p>
+          </div>
+        ) : (
+          <div />
+        )}
+
         <Button type="button" onClick={() => void openCreateModal()}>
           <PlusIcon aria-hidden="true" />
           {isSale ? "Agregar producto" : "Agregar concepto"}
         </Button>
       </header>
+
       {error ? <div role="alert">{error}</div> : null}
+
       {items.length === 0 ? (
         <p className="rounded-xl border border-dashed p-6 text-center text-muted-foreground">
           Aún no hay ítems activos.
@@ -254,6 +328,7 @@ export function MovementItemsPanel({
           ))}
         </div>
       )}
+
       <FinancialMovementItemModal
         isOpen={isModalOpen}
         movementType={movementType}
