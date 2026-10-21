@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { FINANCIAL_MOVEMENT_TYPES } from "~/features/financial-movements/constants"
 import { createFinancialMovementDraft } from "~/services/financial-movements/create-financial-movement-draft"
+import { createEvidenceFormData } from "~/services/financial-movements/evidence-form-data"
 import { getFinancialMovementDraft } from "~/services/financial-movements/get-financial-movement-draft"
 import { listFinancialMovementDrafts } from "~/services/financial-movements/list-financial-movement-drafts"
 import { updateFinancialMovementDraft } from "~/services/financial-movements/update-financial-movement-draft"
@@ -139,5 +140,31 @@ describe("financial movement draft services", () => {
         accessToken,
       },
     )
+  })
+})
+
+describe("createEvidenceFormData", () => {
+  it("creates attachment data without an evidence version", () => {
+    const file = new File(["evidence"], "evidence.png", { type: "image/png" })
+    const formData = createEvidenceFormData({ file, movementVersion: 7 })
+
+    expect(formData.get("file")).toBe(file)
+    expect(formData.get("movementVersion")).toBe("7")
+    expect(formData.has("evidenceVersion")).toBe(false)
+  })
+
+  it("includes the evidence version while replacing", () => {
+    const file = new File(["replacement"], "replacement.pdf", {
+      type: "application/pdf",
+    })
+    const formData = createEvidenceFormData({
+      file,
+      movementVersion: 8,
+      evidenceVersion: 3,
+    })
+
+    expect(formData.get("file")).toBe(file)
+    expect(formData.get("movementVersion")).toBe("8")
+    expect(formData.get("evidenceVersion")).toBe("3")
   })
 })

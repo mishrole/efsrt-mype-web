@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Button } from "~/shared/components/ui/button"
+import { Input } from "~/shared/components/ui/input"
 import { MOVEMENT_EVIDENCE_ACCEPTED_TYPES } from "./constants"
 import type { MovementEvidenceUploadFormProps } from "./interfaces"
 
@@ -31,8 +32,10 @@ export function MovementEvidenceUploadForm({
   return (
     <form className="grid gap-4" onSubmit={submitEvidence} noValidate>
       <label className="grid gap-2">
-        <span>Archivo</span>
-        <input
+        <label htmlFor="movement-evidence-file">Archivo</label>
+        <Input
+          id="movement-evidence-file"
+          name="movementEvidenceFile"
           type="file"
           accept={MOVEMENT_EVIDENCE_ACCEPTED_TYPES}
           disabled={isSubmitting}
