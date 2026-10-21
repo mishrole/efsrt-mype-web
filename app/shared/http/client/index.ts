@@ -36,7 +36,7 @@ async function sendRequest(
     body: serializeBody(options.body),
     cache: options.cache,
     credentials: options.credentials,
-    headers: createHeaders(options.headers, options.accessToken),
+    headers: createHeaders(options.headers, options.accessToken, options.body),
     integrity: options.integrity,
     keepalive: options.keepalive,
     mode: options.mode,

@@ -49,4 +49,24 @@ export const API_ROUTES = {
     `/api/v1/businesses/${businessId}/financial-movements/${movementId}/items/${itemId}/retire`,
   FINANCIAL_DASHBOARD: (businessId: string) =>
     `/api/v1/businesses/${businessId}/dashboard`,
+  MOVEMENT_EVIDENCES: (businessId: string, movementId: string) =>
+    `/api/v1/businesses/${businessId}/financial-movements/${movementId}/evidences`,
+  MOVEMENT_EVIDENCE_DETAIL: (
+    businessId: string,
+    movementId: string,
+    evidenceId: string,
+  ) =>
+    `/api/v1/businesses/${businessId}/financial-movements/${movementId}/evidences/${evidenceId}`,
+  MOVEMENT_EVIDENCE_CONTENT: (
+    businessId: string,
+    movementId: string,
+    evidenceId: string,
+  ) =>
+    `/api/v1/businesses/${businessId}/financial-movements/${movementId}/evidences/${evidenceId}/content`,
+  MOVEMENT_EVIDENCE_REMOVE: (
+    businessId: string,
+    movementId: string,
+    evidenceId: string,
+  ) =>
+    `/api/v1/businesses/${businessId}/financial-movements/${movementId}/evidences/${evidenceId}/remove`,
 } as const

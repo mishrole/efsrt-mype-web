@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from "lucide-react"
 import { FINANCIAL_MOVEMENT_TYPES } from "~/features/financial-movements/constants"
 import { Button } from "~/shared/components/ui/button"
+import { formatDateTime } from "~/shared/utils/date"
 import { formatMoney } from "~/shared/utils/money"
 import type { MovementDraftCardProps } from "./interfaces"
 
@@ -29,9 +30,14 @@ export function MovementDraftCard({
           {movement.description || "Sin descripción"}
         </p>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-[#46536b]">
-          <span>Fecha: {movement.movementDate}</span>
+          <span>
+            Última actualización: {formatDateTime(movement.updatedAt)}
+          </span>
+
+          <span>Fecha de movimiento: {movement.movementDate}</span>
+
           <strong>
-            {formatMoney(movement.totalAmount, movement.currencyCode)}
+            Total: {formatMoney(movement.totalAmount, movement.currencyCode)}
           </strong>
         </div>
       </div>
