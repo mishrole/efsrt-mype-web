@@ -74,7 +74,7 @@ export function ProductForm({
           maxLength={160}
           disabled={isSubmitting || isReadOnly}
           aria-invalid={Boolean(errors.name)}
-          className="h-10 rounded-xl border-[#d9e0ec] bg-white"
+          className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
           {...register("name")}
         />
         <span className="min-h-5 text-sm text-[#b3263e]">
@@ -130,7 +130,7 @@ export function ProductForm({
             step="0.01"
             disabled={isSubmitting || isReadOnly}
             aria-invalid={Boolean(errors.salePrice)}
-            className="h-10 rounded-xl border-[#d9e0ec] bg-white"
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
             {...register("salePrice", { valueAsNumber: true })}
           />
           <span className="min-h-5 text-sm text-[#b3263e]">
@@ -148,7 +148,7 @@ export function ProductForm({
             step="0.01"
             disabled={isSubmitting || isReadOnly}
             aria-invalid={Boolean(errors.unitCost)}
-            className="h-10 rounded-xl border-[#d9e0ec] bg-white"
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
             {...register("unitCost", { valueAsNumber: true })}
           />
           <span className="min-h-5 text-sm text-[#b3263e]">

@@ -75,14 +75,22 @@ describe("MovementDraftDetailScreen additional branches", () => {
     vi.clearAllMocks()
     vi.mocked(useMovementDraftDetail).mockReturnValue({
       movement,
+      itemVersions: [],
       canUpdate: true,
+      canConfirm: false,
       isLoading: false,
       isSubmitting: false,
+      isConfirming: false,
+      isConfirmDialogOpen: false,
       error: "",
       submitMovement,
       returnToMovements,
       reloadMovement: vi.fn(),
       applyMovementSummary: vi.fn(),
+      applyMovementItems: vi.fn(),
+      openConfirmDialog: vi.fn(),
+      closeConfirmDialog: vi.fn(),
+      confirmMovement: vi.fn(),
     })
   })
 
@@ -97,9 +105,11 @@ describe("MovementDraftDetailScreen additional branches", () => {
     expect(screen.getByText("readonly")).toBeInTheDocument()
   })
 
-  it("uses return navigation when the read-only form is cancelled", () => {
+  it("uses the current return action from the page header", () => {
     render(<MovementDraftDetailScreen />)
-    fireEvent.click(screen.getByRole("button", { name: "cancel header" }))
+
+    fireEvent.click(screen.getByRole("button", { name: "Volver a productos" }))
+
     expect(returnToMovements).toHaveBeenCalledOnce()
   })
 })
@@ -121,14 +131,22 @@ describe("MovementDraftDetailScreen evidence integration", () => {
         updatedAt: "",
         version: 7,
       },
+      itemVersions: [],
       canUpdate: true,
+      canConfirm: false,
       isLoading: false,
       isSubmitting: false,
+      isConfirming: false,
+      isConfirmDialogOpen: false,
       error: "",
       submitMovement: vi.fn(),
       returnToMovements: vi.fn(),
       reloadMovement,
       applyMovementSummary: vi.fn(),
+      applyMovementItems: vi.fn(),
+      openConfirmDialog: vi.fn(),
+      closeConfirmDialog: vi.fn(),
+      confirmMovement: vi.fn(),
     })
 
     render(<MovementDraftDetailScreen />)

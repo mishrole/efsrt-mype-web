@@ -44,9 +44,8 @@ describe("SaleItemForm", () => {
         onCancel={vi.fn()}
       />,
     )
-    fireEvent.change(screen.getByLabelText("Producto"), {
-      target: { value: "product" },
-    })
+    fireEvent.click(screen.getByRole("combobox", { name: "Producto" }))
+    fireEvent.click(await screen.findByRole("option", { name: "Gaseosa" }))
     fireEvent.change(screen.getByLabelText("Cantidad"), {
       target: { value: "2" },
     })

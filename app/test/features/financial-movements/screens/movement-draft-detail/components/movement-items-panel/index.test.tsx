@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { MovementItemsPanel } from "~/features/financial-movements/screens/movement-draft-detail/components/movement-items-panel"
 import { FINANCIAL_MOVEMENT_TYPES } from "~/features/financial-movements/constants"
+import { MovementItemsPanel } from "~/features/financial-movements/screens/movement-draft-detail/components/movement-items-panel"
 
 const mocks = vi.hoisted(() => ({
   listItems: vi.fn(),
@@ -123,6 +123,7 @@ const commonProps = {
   movementVersion: 7,
   currencyCode: "PEN",
   onMovementChanged: vi.fn(),
+  onItemsChanged: vi.fn(),
 }
 
 describe("MovementItemsPanel", () => {
@@ -205,8 +206,16 @@ describe("MovementItemsPanel", () => {
         "access-token",
       ),
     )
-    fireEvent.click(screen.getAllByRole("button", { name: /Editar/ })[0])
-    fireEvent.click(screen.getByRole("button", { name: "save sale" }))
+    fireEvent.click(screen.getAllByRole("button", { name: "Editar" })[0])
+
+    await waitFor(() =>
+      expect(mocks.listProducts).toHaveBeenLastCalledWith(
+        { businessId: "business-id" },
+        "access-token",
+      ),
+    )
+
+    fireEvent.click(await screen.findByRole("button", { name: "save sale" }))
     await waitFor(() =>
       expect(mocks.updateSale).toHaveBeenCalledWith(
         "business-id",

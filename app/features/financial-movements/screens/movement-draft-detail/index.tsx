@@ -41,17 +41,17 @@ export default function MovementDraftDetailScreen() {
       </main>
     )
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8 min-[721px]:px-6">
-      <div className="grid gap-6">
-        <header className="flex flex-col gap-4 min-[641px]:flex-row min-[641px]:items-center min-[641px]:justify-between">
-          <div className="flex items-start gap-3">
+    <main className="min-h-screen min-w-80 bg-[#f5f7fb] px-3.5 py-6 text-[#172033] min-[641px]:px-6">
+      <div className="mx-auto grid w-full max-w-[760px] gap-6">
+        <header className="flex flex-col gap-4 min-[641px]:flex-row min-[641px]:items-end min-[641px]:justify-between">
+          <div className="flex flex-col items-start">
             <Button
-              type="button"
-              variant="outline"
-              aria-label="Volver a borradores"
+              variant="ghost"
+              className="mb-3 px-0 hover:bg-transparent cursor-pointer"
               onClick={movementDetailState.returnToMovements}
             >
-              <ArrowLeftIcon aria-hidden="true" />
+              <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />
+              Volver a productos
             </Button>
             <div>
               <p className="m-0 text-sm font-bold text-[#2458d1]">
@@ -116,23 +116,29 @@ export default function MovementDraftDetailScreen() {
             <Accordion
               multiple
               defaultValue={OPEN_SECTIONS}
-              className="grid gap-4"
+              className="gap-0 border-[#e1e6ef] bg-white"
             >
-              <AccordionItem value="header">
-                <div className="flex items-center gap-2 pr-4">
-                  <AccordionTrigger>Cabecera</AccordionTrigger>
+              <AccordionItem
+                value="header"
+                className="bg-white data-open:bg-white"
+              >
+                <AccordionTrigger className="w-full">Cabecera</AccordionTrigger>
+                <AccordionContent className="bg-white">
                   {movementDetailState.canUpdate && !isEditing ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={startEditing}
-                    >
-                      <PencilIcon data-icon="inline-start" aria-hidden="true" />
-                      Editar cabecera
-                    </Button>
+                    <div className="mb-4 flex justify-end">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={startEditing}
+                      >
+                        <PencilIcon
+                          data-icon="inline-start"
+                          aria-hidden="true"
+                        />
+                        Editar cabecera
+                      </Button>
+                    </div>
                   ) : null}
-                </div>
-                <AccordionContent>
                   <FinancialMovementForm
                     key={`${movementDetailState.movement.id}-${movementDetailState.movement.version}-${String(isEditing)}`}
                     type={
@@ -152,9 +158,12 @@ export default function MovementDraftDetailScreen() {
                   />
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="items">
-                <AccordionTrigger>Ítems</AccordionTrigger>
-                <AccordionContent>
+              <AccordionItem
+                value="items"
+                className="bg-white data-open:bg-white"
+              >
+                <AccordionTrigger className="w-full">Ítems</AccordionTrigger>
+                <AccordionContent className="bg-white">
                   <MovementItemsPanel
                     businessId={movementDetailState.movement.businessId}
                     movementId={movementDetailState.movement.id}
@@ -167,9 +176,14 @@ export default function MovementDraftDetailScreen() {
                   />
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="evidences">
-                <AccordionTrigger>Evidencias</AccordionTrigger>
-                <AccordionContent>
+              <AccordionItem
+                value="evidences"
+                className="bg-white data-open:bg-white"
+              >
+                <AccordionTrigger className="w-full">
+                  Evidencias
+                </AccordionTrigger>
+                <AccordionContent className="bg-white">
                   <MovementEvidencesPanel
                     businessId={movementDetailState.movement.businessId}
                     movementId={movementDetailState.movement.id}

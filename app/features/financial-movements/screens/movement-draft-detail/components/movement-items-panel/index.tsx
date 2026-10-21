@@ -104,6 +104,61 @@ export function MovementItemsPanel({
     return () => controller.abort()
   }, [loadItems])
 
+  const loadCreateOptions = useCallback(async (): Promise<void> => {
+    if (!accessToken) {
+      return
+    }
+
+    if (isSale) {
+      const availableProducts = await listProducts(
+        {
+          businessId,
+          isActive: true,
+          availableForSale: true,
+        },
+        accessToken,
+      )
+      setProducts(availableProducts)
+      return
+    }
+
+    const activeExpenseCategories = await listCategories(
+      {
+        businessId,
+        type: 2,
+        isActive: true,
+      },
+      accessToken,
+    )
+    setCategories(activeExpenseCategories)
+  }, [accessToken, businessId, isSale])
+
+  const loadEditOptions = useCallback(async (): Promise<void> => {
+    if (!accessToken) {
+      return
+    }
+
+    if (isSale) {
+      const editableProducts = await listProducts(
+        {
+          businessId,
+        },
+        accessToken,
+      )
+      setProducts(editableProducts)
+      return
+    }
+
+    const editableExpenseCategories = await listCategories(
+      {
+        businessId,
+        type: 2,
+      },
+      accessToken,
+    )
+    setCategories(editableExpenseCategories)
+  }, [accessToken, businessId, isSale])
+
   async function openCreateModal(): Promise<void> {
     if (!accessToken) {
       return
@@ -111,36 +166,20 @@ export function MovementItemsPanel({
 
     setSelectedItem(null)
     setError("")
-
-    if (isSale) {
-      setProducts(
-        await listProducts(
-          {
-            businessId,
-            isActive: true,
-            availableForSale: true,
-          },
-          accessToken,
-        ),
-      )
-    } else {
-      setCategories(
-        await listCategories(
-          {
-            businessId,
-            type: 2,
-            isActive: true,
-          },
-          accessToken,
-        ),
-      )
-    }
-
+    await loadCreateOptions()
     setIsModalOpen(true)
   }
 
-  function openEditModal(item: FinancialMovementItemResponse): void {
+  async function openEditModal(
+    item: FinancialMovementItemResponse,
+  ): Promise<void> {
+    if (!accessToken) {
+      return
+    }
+
     setSelectedItem(item)
+    setError("")
+    await loadEditOptions()
     setIsModalOpen(true)
   }
 
@@ -322,7 +361,7 @@ export function MovementItemsPanel({
               currencyCode={currencyCode}
               isSale={isSale}
               isBusy={isBusy}
-              onEdit={openEditModal}
+              onEdit={(currentItem) => void openEditModal(currentItem)}
               onRetire={(currentItem) => void retireItem(currentItem)}
             />
           ))}

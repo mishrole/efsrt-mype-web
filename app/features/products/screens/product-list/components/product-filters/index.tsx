@@ -61,7 +61,7 @@ export function ProductFilters({
           />
           <Input
             aria-label="Buscar productos"
-            className="h-10 rounded-xl border-[#d9e0ec] bg-white pl-9"
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
             value={values.search}
             onChange={handleSearchChange}
             disabled={disabled}
@@ -78,7 +78,7 @@ export function ProductFilters({
           onValueChange={handleProductCategoryChange}
           disabled={disabled}
         >
-          <SelectTrigger className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[180px]">
+          <SelectTrigger className="min-h-12 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[180px]">
             <SelectValue>
               {getProductCategoryLabel(
                 values.productCategoryId,
@@ -106,7 +106,7 @@ export function ProductFilters({
           onValueChange={handleStatusChange}
           disabled={disabled}
         >
-          <SelectTrigger className="h-10 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]">
+          <SelectTrigger className="min-h-12 w-full rounded-xl border-[#d9e0ec] bg-white min-[721px]:min-w-[150px]">
             <SelectValue>{getStatusLabel(values.status)}</SelectValue>
           </SelectTrigger>
           <SelectContent align="start" alignItemWithTrigger={false}>

@@ -34,6 +34,7 @@ export function MovementEvidenceUploadForm({
       <label className="grid gap-2">
         <label htmlFor="movement-evidence-file">Archivo</label>
         <Input
+          className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
           id="movement-evidence-file"
           name="movementEvidenceFile"
           type="file"

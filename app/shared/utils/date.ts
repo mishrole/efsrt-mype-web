@@ -20,3 +20,12 @@ export function formatDateTime(value: string): string {
 
   return DATE_TIME_FORMATTER.format(date)
 }
+
+export function getCurrentLocalDate(): string {
+  const currentDate = new Date()
+  const timezoneOffset = currentDate.getTimezoneOffset() * 60_000
+
+  return new Date(currentDate.getTime() - timezoneOffset)
+    .toISOString()
+    .slice(0, 10)
+}
