@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { Button } from "~/shared/components/ui/button"
+import { ItemFormActions } from "~/features/financial-movements/components/item-form-actions"
+import { ItemFormNumberFields } from "~/features/financial-movements/components/item-form-number-fields"
 import { Input } from "~/shared/components/ui/input"
 import { Textarea } from "~/shared/components/ui/textarea"
 import type { ExpenseItemFormProps } from "./interfaces"
@@ -52,42 +53,32 @@ export function ExpenseItemForm({
           {errors.description?.message}
         </span>
       </label>
-      <label className="grid gap-2">
-        <span>Cantidad</span>
-        <Input
-          type="number"
-          step="0.01"
-          disabled={isSubmitting}
-          {...register("quantity", { valueAsNumber: true })}
-        />
-        <span className="text-sm text-destructive">
-          {errors.quantity?.message}
-        </span>
-      </label>
-      <label className="grid gap-2">
-        <span>Importe unitario</span>
-        <Input
-          type="number"
-          step="0.01"
-          disabled={isSubmitting}
-          {...register("unitAmount", { valueAsNumber: true })}
-        />
-        <span className="text-sm text-destructive">
-          {errors.unitAmount?.message}
-        </span>
-      </label>
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={onCancel}>
-          Cancelar
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting
-            ? "Guardando..."
-            : item
-              ? "Guardar cambios"
-              : "Agregar concepto"}
-        </Button>
-      </div>
+      <ItemFormNumberFields
+        quantityInput={
+          <Input
+            type="number"
+            step="0.01"
+            disabled={isSubmitting}
+            {...register("quantity", { valueAsNumber: true })}
+          />
+        }
+        quantityError={errors.quantity?.message}
+        unitAmountInput={
+          <Input
+            type="number"
+            step="0.01"
+            disabled={isSubmitting}
+            {...register("unitAmount", { valueAsNumber: true })}
+          />
+        }
+        unitAmountError={errors.unitAmount?.message}
+      />
+      <ItemFormActions
+        isEditing={item !== null}
+        isSubmitting={isSubmitting}
+        createLabel="Agregar concepto"
+        onCancel={onCancel}
+      />
     </form>
   )
 }
