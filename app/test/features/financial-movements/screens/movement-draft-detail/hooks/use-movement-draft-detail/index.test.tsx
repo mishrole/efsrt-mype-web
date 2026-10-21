@@ -15,6 +15,11 @@ const business = {
     permissions: string[]
   } | null,
 }
+
+const serviceMocks = vi.hoisted(() => ({
+  getFinancialMovementDraft: vi.fn(),
+  updateFinancialMovementDraft: vi.fn(),
+}))
 vi.mock("react-router", () => ({
   useNavigate: () => navigateMock,
   useParams: () => params,
@@ -125,5 +130,29 @@ describe("useMovementDraftDetail", () => {
     expect(result.current.canUpdate).toBe(false)
     expect(getMock).not.toHaveBeenCalled()
     expect(updateMock).not.toHaveBeenCalled()
+  })
+
+  it("replaces only total and version on the current movement", async () => {
+    const { result } = renderHook(() => useMovementDraftDetail())
+    await waitFor(() => expect(result.current.movement).toEqual(movement))
+
+    act(() => result.current.applyMovementSummary(30, 11))
+
+    expect(result.current.movement).toEqual({
+      ...movement,
+      totalAmount: 30,
+      version: 11,
+    })
+  })
+
+  it("keeps null when there is no loaded movement", () => {
+    serviceMocks.getFinancialMovementDraft.mockImplementation(
+      () => new Promise(() => undefined),
+    )
+    const { result } = renderHook(() => useMovementDraftDetail())
+
+    act(() => result.current.applyMovementSummary(30, 11))
+
+    expect(result.current.movement).toBeNull()
   })
 })
