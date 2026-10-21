@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { apiConfiguration } from "~/shared/configuration/api"
 import { configureAuthRefresh, request } from "~/shared/http/client"
+import { createHeaders, serializeBody } from "~/shared/http/client/utils"
 
 const fetchMock = vi.fn<typeof fetch>()
 
@@ -237,5 +238,41 @@ describe("HTTP client", () => {
       }),
     ).rejects.toMatchObject({ status: 401 })
     expect(refreshSession).not.toHaveBeenCalled()
+  })
+})
+
+describe("HTTP client FormData support", () => {
+  it("preserves FormData as the request body", () => {
+    const formData = new FormData()
+    formData.append("movementVersion", "7")
+
+    expect(serializeBody(formData)).toBe(formData)
+  })
+
+  it("does not force a JSON content type for FormData", () => {
+    const headers = createHeaders(undefined, "access-token", new FormData())
+
+    expect(headers.get("Accept")).toBe("application/json")
+    expect(headers.get("Authorization")).toBe("Bearer access-token")
+    expect(headers.has("Content-Type")).toBe(false)
+  })
+
+  it("keeps JSON behavior for ordinary bodies", () => {
+    const body = { movementVersion: 7 }
+    const headers = createHeaders(undefined, undefined, body)
+
+    expect(headers.get("Content-Type")).toBe("application/json")
+    expect(serializeBody(body)).toBe(JSON.stringify(body))
+    expect(serializeBody(undefined)).toBeUndefined()
+  })
+
+  it("respects an explicitly supplied content type", () => {
+    const headers = createHeaders(
+      { "Content-Type": "application/problem+json" },
+      undefined,
+      {},
+    )
+
+    expect(headers.get("Content-Type")).toBe("application/problem+json")
   })
 })

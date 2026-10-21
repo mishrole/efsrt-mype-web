@@ -8,6 +8,8 @@ const componentMocks = vi.hoisted(() => ({
   submittedValues: { movementDate: "2026-10-20", description: "Cabecera" },
 }))
 
+const panelMocks = vi.hoisted(() => ({ evidenceProps: vi.fn() }))
+
 vi.mock(
   "~/features/financial-movements/screens/movement-draft-detail/hooks/use-movement-draft-detail",
   () => ({ useMovementDraftDetail: vi.fn() }),
@@ -40,6 +42,16 @@ vi.mock(
 vi.mock(
   "~/features/financial-movements/screens/movement-draft-detail/components/movement-items-panel",
   () => ({ MovementItemsPanel: () => <div>items panel</div> }),
+)
+
+vi.mock(
+  "~/features/financial-movements/screens/movement-draft-detail/components/movement-evidences-panel",
+  () => ({
+    MovementEvidencesPanel: (props: unknown) => {
+      panelMocks.evidenceProps(props)
+      return <div>evidences panel</div>
+    },
+  }),
 )
 
 const movement: FinancialMovementDraftResponse = {
@@ -89,5 +101,46 @@ describe("MovementDraftDetailScreen additional branches", () => {
     render(<MovementDraftDetailScreen />)
     fireEvent.click(screen.getByRole("button", { name: "cancel header" }))
     expect(returnToMovements).toHaveBeenCalledOnce()
+  })
+})
+
+describe("MovementDraftDetailScreen evidence integration", () => {
+  it("passes movement identity, version and reload callback", () => {
+    const reloadMovement = vi.fn().mockResolvedValue(undefined)
+    vi.mocked(useMovementDraftDetail).mockReturnValue({
+      movement: {
+        id: "movement-id",
+        businessId: "business-id",
+        type: 1,
+        status: 1,
+        movementDate: "2026-10-21",
+        description: "Venta",
+        currencyCode: "PEN",
+        totalAmount: 10,
+        createdAt: "",
+        updatedAt: "",
+        version: 7,
+      },
+      canUpdate: true,
+      isLoading: false,
+      isSubmitting: false,
+      error: "",
+      submitMovement: vi.fn(),
+      returnToMovements: vi.fn(),
+      reloadMovement,
+      applyMovementSummary: vi.fn(),
+    })
+
+    render(<MovementDraftDetailScreen />)
+
+    expect(screen.getByText("evidences panel")).toBeInTheDocument()
+    expect(panelMocks.evidenceProps).toHaveBeenCalledWith(
+      expect.objectContaining({
+        businessId: "business-id",
+        movementId: "movement-id",
+        movementVersion: 7,
+        onMovementChanged: reloadMovement,
+      }),
+    )
   })
 })
