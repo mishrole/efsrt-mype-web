@@ -10,6 +10,7 @@ describe("page constants", () => {
       PRODUCT_CATEGORIES: "product-categories",
       PRODUCT_CATEGORY_CREATE: "product-categories/create",
       PRODUCT_CATEGORY_DETAIL: "product-categories/:productCategoryId",
+      FINANCIAL_MOVEMENT_DRAFTS: "financial-movements/drafts",
       FINANCIAL_MOVEMENTS: "financial-movements",
       FINANCIAL_MOVEMENT_CREATE: "financial-movements/create/:movementType",
       FINANCIAL_MOVEMENT_DETAIL: "financial-movements/:movementId",

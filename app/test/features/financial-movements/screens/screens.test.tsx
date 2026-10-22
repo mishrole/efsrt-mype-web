@@ -76,6 +76,7 @@ describe("financial movement screens", () => {
       createExpense: vi.fn(),
       viewMovement: vi.fn(),
       returnToDashboard: vi.fn(),
+      returnToFinancialMovements: vi.fn(),
     })
   })
   it("returns metadata", () => {

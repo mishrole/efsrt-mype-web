@@ -310,7 +310,7 @@ describe("useMovementDraftDetail", () => {
     act(() => result.current.returnToMovements())
 
     expect(routerMocks.navigate).toHaveBeenCalledWith(
-      APP_PATHS.FINANCIAL_MOVEMENTS,
+      APP_PATHS.FINANCIAL_MOVEMENT_DRAFTS,
     )
   })
 
@@ -419,7 +419,7 @@ describe("useMovementDraftDetail", () => {
       "access-token",
     )
     expect(routerMocks.navigate).toHaveBeenCalledWith(
-      APP_PATHS.FINANCIAL_MOVEMENTS,
+      APP_PATHS.FINANCIAL_MOVEMENT_DRAFTS,
     )
     expect(result.current.isConfirmDialogOpen).toBe(false)
     expect(result.current.isConfirming).toBe(false)

@@ -6,6 +6,7 @@ export const APP_PAGES_ROUTES = {
   PRODUCT_CATEGORY_CREATE: "product-categories/create",
   PRODUCT_CATEGORY_DETAIL: "product-categories/:productCategoryId",
   FINANCIAL_MOVEMENTS: "financial-movements",
+  FINANCIAL_MOVEMENT_DRAFTS: "financial-movements/drafts",
   FINANCIAL_MOVEMENT_CREATE: "financial-movements/create/:movementType",
   FINANCIAL_MOVEMENT_DETAIL: "financial-movements/:movementId",
   PRODUCTS: "products",
@@ -23,6 +24,7 @@ export const APP_PATHS = {
   PRODUCT_CATEGORY_DETAIL: (productCategoryId: string) =>
     `/product-categories/${productCategoryId}`,
   FINANCIAL_MOVEMENTS: "/financial-movements",
+  FINANCIAL_MOVEMENT_DRAFTS: "/financial-movements/drafts",
   FINANCIAL_MOVEMENT_CREATE: (movementType: "sale" | "expense") =>
     `/financial-movements/create/${movementType}`,
   FINANCIAL_MOVEMENT_DETAIL: (movementId: string) =>

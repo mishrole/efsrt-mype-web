@@ -67,7 +67,7 @@ export function useMovementDraftCreate(): UseMovementDraftCreateResult {
   }
 
   function returnToMovements(): void {
-    void navigate(APP_PATHS.FINANCIAL_MOVEMENTS)
+    void navigate(APP_PATHS.FINANCIAL_MOVEMENT_DRAFTS)
   }
 
   return {

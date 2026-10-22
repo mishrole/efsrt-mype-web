@@ -8,6 +8,7 @@ export const FINANCIAL_MOVEMENT_PERMISSIONS = {
 export const FINANCIAL_MOVEMENT_TYPES = {
   sale: 1,
   expense: 2,
+  openingBalance: 3,
 } as const
 
 export const FINANCIAL_MOVEMENT_STATUS = {
