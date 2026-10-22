@@ -139,6 +139,7 @@ export function FirstBusinessOnboarding({
                 >
                   <span aria-hidden="true">S/</span>
                   <input
+                    className="pl-4"
                     type="number"
                     inputMode="decimal"
                     step="0.01"
