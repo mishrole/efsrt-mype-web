@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { fireEvent, render, screen } from "@testing-library/react"
+import { describe, expect, it, vi } from "vitest"
 import { MovementHistoryDetailEvidences } from "~/features/financial-movements/screens/movement-history-detail/components/movement-history-detail-evidences"
 import { MovementHistoryDetailItems } from "~/features/financial-movements/screens/movement-history-detail/components/movement-history-detail-items"
 import { MovementHistoryDetailSummary } from "~/features/financial-movements/screens/movement-history-detail/components/movement-history-detail-summary"
@@ -116,7 +116,12 @@ describe("movement history detail components", () => {
     render(
       <>
         <MovementHistoryDetailItems items={[]} currencyCode="PEN" />
-        <MovementHistoryDetailEvidences evidences={[]} />
+        <MovementHistoryDetailEvidences
+          evidences={[]}
+          openingEvidenceId={null}
+          error=""
+          onOpenEvidence={vi.fn()}
+        />
       </>,
     )
     expect(
@@ -134,6 +139,9 @@ describe("movement history detail components", () => {
   ])("renders evidence status %s", (status, expectedLabel) => {
     render(
       <MovementHistoryDetailEvidences
+        openingEvidenceId={null}
+        error=""
+        onOpenEvidence={vi.fn()}
         evidences={[
           {
             id: `evidence-${status}`,
@@ -150,5 +158,63 @@ describe("movement history detail components", () => {
     expect(
       screen.getByText(expectedLabel, { exact: false }),
     ).toBeInTheDocument()
+  })
+
+  it("opens only active evidences and exposes opening and error states", () => {
+    const onOpenEvidence = vi.fn().mockResolvedValue(undefined)
+    const { rerender } = render(
+      <MovementHistoryDetailEvidences
+        evidences={[
+          {
+            id: "active-evidence",
+            originalFileName: "active.pdf",
+            mimeType: "application/pdf",
+            sizeBytes: 512,
+            status: MovementEvidenceStatus.Active,
+            uploadedAt: "2026-10-05T20:00:00Z",
+            version: 1,
+          },
+          {
+            id: "purged-evidence",
+            originalFileName: "purged.pdf",
+            mimeType: "application/pdf",
+            sizeBytes: 512,
+            status: MovementEvidenceStatus.Purged,
+            uploadedAt: "2026-10-05T20:00:00Z",
+            version: 1,
+          },
+        ]}
+        openingEvidenceId={null}
+        error=""
+        onOpenEvidence={onOpenEvidence}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "Abrir" }))
+    expect(onOpenEvidence).toHaveBeenCalledWith("active-evidence")
+    expect(screen.getAllByRole("button")).toHaveLength(1)
+
+    rerender(
+      <MovementHistoryDetailEvidences
+        evidences={[
+          {
+            id: "active-evidence",
+            originalFileName: "active.pdf",
+            mimeType: "application/pdf",
+            sizeBytes: 512,
+            status: MovementEvidenceStatus.Active,
+            uploadedAt: "2026-10-05T20:00:00Z",
+            version: 1,
+          },
+        ]}
+        openingEvidenceId="active-evidence"
+        error="No fue posible abrir la evidencia."
+        onOpenEvidence={onOpenEvidence}
+      />,
+    )
+    expect(screen.getByRole("button", { name: "Abriendo..." })).toBeDisabled()
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "No fue posible abrir la evidencia.",
+    )
   })
 })

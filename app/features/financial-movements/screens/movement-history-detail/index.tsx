@@ -79,6 +79,9 @@ export default function MovementHistoryDetailScreen() {
         />
         <MovementHistoryDetailEvidences
           evidences={detailState.movement.evidences}
+          error={detailState.error}
+          onOpenEvidence={detailState.openEvidence}
+          openingEvidenceId={detailState.openingEvidenceId}
         />
       </div>
     </main>

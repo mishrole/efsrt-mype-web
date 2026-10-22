@@ -16,6 +16,7 @@ vi.mock("~/features/financial-movements/screens/movement-draft-detail", () => ({
 
 const useDetailMock = vi.mocked(useMovementHistoryDetail)
 const returnToHistory = vi.fn()
+const openEvidence = vi.fn()
 const movement = {
   id: "movement-id",
   businessId: "business-id",
@@ -55,6 +56,9 @@ describe("MovementHistoryDetailScreen", () => {
       movement: null,
       isLoading: true,
       error: "",
+      evidenceError: "",
+      openingEvidenceId: null,
+      openEvidence,
       returnToHistory,
     })
     render(<MovementHistoryDetailScreen />)
@@ -66,6 +70,9 @@ describe("MovementHistoryDetailScreen", () => {
       movement: null,
       isLoading: false,
       error: "No encontrado",
+      evidenceError: "",
+      openingEvidenceId: null,
+      openEvidence,
       returnToHistory,
     })
     const { rerender } = render(<MovementHistoryDetailScreen />)
@@ -76,6 +83,9 @@ describe("MovementHistoryDetailScreen", () => {
       movement: null,
       isLoading: false,
       error: "",
+      evidenceError: "",
+      openingEvidenceId: null,
+      openEvidence,
       returnToHistory,
     })
     rerender(<MovementHistoryDetailScreen />)
@@ -93,6 +103,9 @@ describe("MovementHistoryDetailScreen", () => {
       },
       isLoading: false,
       error: "",
+      evidenceError: "",
+      openingEvidenceId: null,
+      openEvidence,
       returnToHistory,
     })
     render(<MovementHistoryDetailScreen />)
@@ -104,6 +117,9 @@ describe("MovementHistoryDetailScreen", () => {
       movement,
       isLoading: false,
       error: "",
+      evidenceError: "",
+      openingEvidenceId: null,
+      openEvidence,
       returnToHistory,
     })
     render(<MovementHistoryDetailScreen />)

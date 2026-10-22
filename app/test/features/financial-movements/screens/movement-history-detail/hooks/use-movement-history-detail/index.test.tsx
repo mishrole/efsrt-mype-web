@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useMovementHistoryDetail } from "~/features/financial-movements/screens/movement-history-detail/hooks/use-movement-history-detail"
 import { getFinancialMovementHistoryDetail } from "~/services/financial-movements/get-financial-movement-history-detail"
 import { FinancialMovementStatus } from "~/services/financial-movements/list-financial-movement-history/interfaces"
+import { openMovementEvidence } from "~/services/financial-movements/open-movement-evidence"
 import { APP_PATHS } from "~/shared/constants/pages"
 import { createApiError } from "~/shared/http/errors"
 
@@ -30,8 +31,13 @@ vi.mock(
     getFinancialMovementHistoryDetail: vi.fn(),
   }),
 )
+vi.mock("~/services/financial-movements/open-movement-evidence", () => ({
+  openMovementEvidence: vi.fn(),
+}))
 
 const getDetailMock = vi.mocked(getFinancialMovementHistoryDetail)
+const openEvidenceMock = vi.mocked(openMovementEvidence)
+const windowOpenMock = vi.spyOn(window, "open").mockImplementation(() => null)
 const movement = {
   id: "movement-id",
   businessId: "business-id",
@@ -66,6 +72,10 @@ beforeEach(() => {
   authState.accessToken = "access-token"
   businessState.currentBusinessId = "business-id"
   getDetailMock.mockResolvedValue(movement)
+  openEvidenceMock.mockResolvedValue({
+    url: "https://temporary.example/evidence",
+    expiresAt: "2026-10-22T01:00:00Z",
+  })
 })
 
 describe("useMovementHistoryDetail", () => {
@@ -119,6 +129,67 @@ describe("useMovementHistoryDetail", () => {
         "No fue posible cargar el detalle del movimiento.",
       ),
     )
+  })
+
+  it("opens an active evidence using temporary controlled access", async () => {
+    const { result } = renderHook(() => useMovementHistoryDetail())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    await act(async () => {
+      await result.current.openEvidence("evidence-id")
+    })
+
+    expect(openEvidenceMock).toHaveBeenCalledWith(
+      "business-id",
+      "movement-id",
+      "evidence-id",
+      "access-token",
+    )
+    expect(windowOpenMock).toHaveBeenCalledWith(
+      "https://temporary.example/evidence",
+      "_blank",
+      "noopener,noreferrer",
+    )
+    expect(result.current.openingEvidenceId).toBeNull()
+    expect(result.current.evidenceError).toBe("")
+  })
+
+  it("reports evidence access errors and prevents concurrent openings", async () => {
+    let resolveEvidence:
+      ((value: { url: string; expiresAt: string }) => void) | undefined
+    openEvidenceMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveEvidence = resolve
+        }),
+    )
+    const { result } = renderHook(() => useMovementHistoryDetail())
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+
+    let firstOpening: Promise<void> | undefined
+    act(() => {
+      firstOpening = result.current.openEvidence("first-evidence")
+    })
+    await waitFor(() =>
+      expect(result.current.openingEvidenceId).toBe("first-evidence"),
+    )
+    await act(async () => {
+      await result.current.openEvidence("second-evidence")
+      resolveEvidence?.({
+        url: "https://temporary.example/first",
+        expiresAt: "2026-10-22T01:00:00Z",
+      })
+      await firstOpening
+    })
+    expect(openEvidenceMock).toHaveBeenCalledOnce()
+
+    openEvidenceMock.mockRejectedValueOnce(
+      createApiError(403, { message: "Evidencia no disponible" }),
+    )
+    await act(async () => {
+      await result.current.openEvidence("failed-evidence")
+    })
+    expect(result.current.evidenceError).toBe("Evidencia no disponible")
   })
 
   it("returns explicitly to the history", async () => {
