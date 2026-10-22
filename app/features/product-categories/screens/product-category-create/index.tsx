@@ -53,7 +53,7 @@ export default function ProductCategoryCreateScreen() {
         <header className="flex flex-col items-start">
           <Button
             variant="ghost"
-            className="mb-3 px-0 hover:bg-transparent"
+            className="mb-3 px-0 hover:bg-transparent cursor-pointer"
             onClick={returnToProductCategories}
           >
             <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />

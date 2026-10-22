@@ -133,7 +133,7 @@ export function useMovementDraftDetail(): UseMovementDraftDetailResult {
   }, [loadMovement])
 
   const returnToMovements = useCallback((): void => {
-    void navigate(APP_PATHS.FINANCIAL_MOVEMENTS)
+    void navigate(APP_PATHS.FINANCIAL_MOVEMENT_DRAFTS)
   }, [navigate])
 
   const applyMovementSummary = useCallback(
@@ -205,7 +205,7 @@ export function useMovementDraftDetail(): UseMovementDraftDetailResult {
         accessToken,
       )
       setIsConfirmDialogOpen(false)
-      void navigate(APP_PATHS.FINANCIAL_MOVEMENTS)
+      void navigate(APP_PATHS.FINANCIAL_MOVEMENT_DRAFTS)
     } catch (exception) {
       setError(
         isApiError(exception)

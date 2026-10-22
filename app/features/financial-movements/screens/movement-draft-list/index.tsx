@@ -18,10 +18,10 @@ export default function MovementDraftListScreen() {
             <Button
               variant="ghost"
               className="mb-3 px-0 hover:bg-transparent cursor-pointer"
-              onClick={movementsState.returnToDashboard}
+              onClick={movementsState.returnToFinancialMovements}
             >
               <ArrowLeftIcon data-icon="inline-end" aria-hidden="true" />
-              Volver al dashboard
+              Volver al movimientos
             </Button>
             <span className="block text-xs font-extrabold tracking-[0.1em] text-[#2b5fce] uppercase">
               Operaciones

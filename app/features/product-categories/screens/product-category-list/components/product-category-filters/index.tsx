@@ -56,7 +56,7 @@ export function ProductCategoryFilters({
           />
           <Input
             aria-label="Buscar categorías de producto"
-            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3"
+            className="min-h-12 rounded-xl border-[#d9e0ec] bg-white px-3 py-3 pl-8"
             value={values.search}
             onChange={handleSearchChange}
             disabled={disabled}

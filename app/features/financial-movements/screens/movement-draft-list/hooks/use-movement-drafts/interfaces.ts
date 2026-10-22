@@ -9,4 +9,5 @@ export interface UseMovementDraftsResult {
   createExpense: () => void
   viewMovement: (movementId: string) => void
   returnToDashboard: () => void
+  returnToFinancialMovements: () => void
 }

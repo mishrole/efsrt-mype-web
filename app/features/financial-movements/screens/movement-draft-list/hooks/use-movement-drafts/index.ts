@@ -90,6 +90,10 @@ export function useMovementDrafts(): UseMovementDraftsResult {
     void navigate(APP_PATHS.DASHBOARD)
   }
 
+  function returnToFinancialMovements(): void {
+    void navigate(APP_PATHS.FINANCIAL_MOVEMENTS)
+  }
+
   return {
     movements,
     canCreate:
@@ -101,5 +105,6 @@ export function useMovementDrafts(): UseMovementDraftsResult {
     createExpense,
     viewMovement,
     returnToDashboard,
+    returnToFinancialMovements,
   }
 }
