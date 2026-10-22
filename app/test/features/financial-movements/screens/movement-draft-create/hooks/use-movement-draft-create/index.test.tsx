@@ -68,7 +68,9 @@ describe("useMovementDraftCreate", () => {
       APP_PATHS.FINANCIAL_MOVEMENT_DETAIL("movement-id"),
     )
     act(() => result.current.returnToMovements())
-    expect(navigateMock).toHaveBeenLastCalledWith(APP_PATHS.FINANCIAL_MOVEMENTS)
+    expect(navigateMock).toHaveBeenLastCalledWith(
+      APP_PATHS.FINANCIAL_MOVEMENT_DRAFTS,
+    )
   })
   it("reports API and fallback errors", async () => {
     createMock.mockRejectedValueOnce(

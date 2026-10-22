@@ -27,11 +27,15 @@ export default [
   ),
   route(
     APP_PAGES_ROUTES.FINANCIAL_MOVEMENT_DETAIL,
-    "features/financial-movements/screens/movement-draft-detail/index.tsx",
+    "features/financial-movements/screens/movement-history-detail/index.tsx",
+  ),
+  route(
+    APP_PAGES_ROUTES.FINANCIAL_MOVEMENT_DRAFTS,
+    "features/financial-movements/screens/movement-draft-list/index.tsx",
   ),
   route(
     APP_PAGES_ROUTES.FINANCIAL_MOVEMENTS,
-    "features/financial-movements/screens/movement-draft-list/index.tsx",
+    "features/financial-movements/screens/movement-history-list/index.tsx",
   ),
   route(
     APP_PAGES_ROUTES.PRODUCT_CREATE,
