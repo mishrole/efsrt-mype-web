@@ -1,9 +1,9 @@
-import { FINANCIAL_MOVEMENT_TYPES } from "~/features/financial-movements/constants"
 import { formatDateTime } from "~/shared/utils/date"
 import { formatMoney } from "~/shared/utils/money"
 import {
   getMovementStatusClasses,
   getMovementStatusLabel,
+  getMovementTypeLabel,
 } from "../../../movement-history-list/components/movement-history-card/utils"
 import type { MovementHistoryDetailSummaryProps } from "./interfaces"
 
@@ -18,9 +18,7 @@ export function MovementHistoryDetailSummary({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <h2 id="movement-summary-title" className="m-0 text-xl font-bold">
-            {movement.type === FINANCIAL_MOVEMENT_TYPES.sale
-              ? "Venta"
-              : "Gasto"}
+            {getMovementTypeLabel(movement.type)}
           </h2>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-bold ${getMovementStatusClasses(movement.status)}`}

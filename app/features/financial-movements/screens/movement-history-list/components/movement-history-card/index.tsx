@@ -1,10 +1,13 @@
 import { ArrowRightIcon, PaperclipIcon } from "lucide-react"
-import { FINANCIAL_MOVEMENT_TYPES } from "~/features/financial-movements/constants"
 import { Button } from "~/shared/components/ui/button"
 import { formatDateTime } from "~/shared/utils/date"
 import { formatMoney } from "~/shared/utils/money"
 import type { MovementHistoryCardProps } from "./interfaces"
-import { getMovementStatusClasses, getMovementStatusLabel } from "./utils"
+import {
+  getMovementStatusClasses,
+  getMovementStatusLabel,
+  getMovementTypeLabel,
+} from "./utils"
 
 export function MovementHistoryCard({
   movement,
@@ -22,9 +25,7 @@ export function MovementHistoryCard({
       <div className="grid gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="m-0 text-base font-bold text-[#172033]">
-            {movement.type === FINANCIAL_MOVEMENT_TYPES.sale
-              ? "Venta"
-              : "Gasto"}
+            {getMovementTypeLabel(movement.type)}
           </h2>
           <span
             className={`rounded-full px-2.5 py-1 text-xs font-bold ${getMovementStatusClasses(movement.status)}`}

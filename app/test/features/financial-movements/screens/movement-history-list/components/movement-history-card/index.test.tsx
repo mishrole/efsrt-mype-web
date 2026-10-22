@@ -52,4 +52,20 @@ describe("MovementHistoryCard", () => {
     expect(screen.getByText("1 ítem")).toBeInTheDocument()
     expect(screen.queryByText("Con evidencia")).not.toBeInTheDocument()
   })
+
+  it("renders an opening balance with its own movement type label", () => {
+    render(
+      <MovementHistoryCard
+        movement={{
+          ...movement,
+          type: 3,
+          description: "Saldo inicial del negocio",
+        }}
+        onView={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText("Saldo de apertura")).toBeInTheDocument()
+    expect(screen.queryByText("Gasto")).not.toBeInTheDocument()
+  })
 })

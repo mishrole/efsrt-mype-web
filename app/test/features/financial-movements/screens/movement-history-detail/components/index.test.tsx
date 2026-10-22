@@ -217,4 +217,11 @@ describe("movement history detail components", () => {
       "No fue posible abrir la evidencia.",
     )
   })
+
+  it("renders opening balance as its own movement type", () => {
+    render(<MovementHistoryDetailSummary movement={{ ...movement, type: 3 }} />)
+
+    expect(screen.getByText("Saldo de apertura")).toBeInTheDocument()
+    expect(screen.queryByText("Gasto")).not.toBeInTheDocument()
+  })
 })

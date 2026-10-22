@@ -1,3 +1,7 @@
+import {
+  FINANCIAL_MOVEMENT_TYPES,
+  type FinancialMovementType,
+} from "~/features/financial-movements/constants"
 import { FinancialMovementStatus } from "~/services/financial-movements/list-financial-movement-history/interfaces"
 
 export function getMovementStatusLabel(
@@ -27,5 +31,16 @@ export function getMovementStatusClasses(
       return "bg-[#f1f3f7] text-[#596579]"
     default:
       return "bg-[#eef4ff] text-[#2b5fce]"
+  }
+}
+
+export function getMovementTypeLabel(type: FinancialMovementType): string {
+  switch (type) {
+    case FINANCIAL_MOVEMENT_TYPES.sale:
+      return "Venta"
+    case FINANCIAL_MOVEMENT_TYPES.expense:
+      return "Gasto"
+    case FINANCIAL_MOVEMENT_TYPES.openingBalance:
+      return "Saldo de apertura"
   }
 }
